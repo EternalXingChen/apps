@@ -42,7 +42,18 @@ class NotificationService {
   Future<void> scheduleTaskReminder(TaskModel task) async {
     if (task.dueTime == null) return;
 
-    final scheduledDate = tz.TZDateTime.from(task.dueTime!, tz.local);
+    if (task.dueDate == null) return;
+    
+    final scheduledDate = tz.TZDateTime.from(
+      DateTime(
+        task.dueDate!.year,
+        task.dueDate!.month,
+        task.dueDate!.day,
+        task.dueTime?.hour ?? 0,
+        task.dueTime?.minute ?? 0,
+      ),
+      tz.local,
+    );
     
     // Schedule 15 minutes before
     final reminder15Min = scheduledDate.subtract(const Duration(minutes: 15));
@@ -124,8 +135,8 @@ class NotificationService {
       'general_channel',
       '一般通知',
       channelDescription: '一般应用通知',
-      importance: Importance.normal,
-      priority: Priority.normal,
+      importance: Importance.defaultImportance,
+      priority: Priority.defaultPriority,
     );
 
     const iosDetails = DarwinNotificationDetails();

@@ -1,3 +1,5 @@
+import 'category_model.dart' show AccountType;
+
 enum TransactionType {
   expense,
   income,
@@ -8,13 +10,15 @@ class TransactionModel {
   final double amount;
   final TransactionType type;
   final String categoryId;
-  final String accountType;
+  final AccountType accountType;
   final DateTime timestamp;
   final String? note;
   final List<String>? tags;
   final bool isEncrypted;
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  String get category => categoryId;
 
   TransactionModel({
     required this.id,
@@ -37,7 +41,7 @@ class TransactionModel {
       'amount': amount,
       'type': type.name,
       'categoryId': categoryId,
-      'accountType': accountType,
+      'accountType': accountType.name,
       'timestamp': timestamp.toIso8601String(),
       'note': note,
       'tags': tags?.join(','),
@@ -53,7 +57,7 @@ class TransactionModel {
       amount: json['amount'],
       type: TransactionType.values.byName(json['type']),
       categoryId: json['categoryId'],
-      accountType: json['accountType'],
+      accountType: AccountType.values.byName(json['accountType'] ?? 'cash'),
       timestamp: DateTime.parse(json['timestamp']),
       note: json['note'],
       tags: json['tags']?.toString().split(',').where((s) => s.isNotEmpty).toList(),
@@ -68,7 +72,7 @@ class TransactionModel {
     double? amount,
     TransactionType? type,
     String? categoryId,
-    String? accountType,
+    AccountType? accountType,
     DateTime? timestamp,
     String? note,
     List<String>? tags,

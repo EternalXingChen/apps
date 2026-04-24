@@ -1,3 +1,31 @@
+enum AccountType {
+  cash,
+  creditCard,
+  debitCard,
+  alipay,
+  wechatPay,
+  other,
+}
+
+extension AccountTypeExtension on AccountType {
+  String get label {
+    switch (this) {
+      case AccountType.cash:
+        return '现金';
+      case AccountType.creditCard:
+        return '信用卡';
+      case AccountType.debitCard:
+        return '借记卡';
+      case AccountType.alipay:
+        return '支付宝';
+      case AccountType.wechatPay:
+        return '微信支付';
+      case AccountType.other:
+        return '其他';
+    }
+  }
+}
+
 class CategoryModel {
   final String id;
   final String name;

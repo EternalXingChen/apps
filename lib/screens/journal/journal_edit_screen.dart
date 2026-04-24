@@ -11,10 +11,10 @@ class JournalEditScreen extends StatefulWidget {
   const JournalEditScreen({Key? key, this.entry}) : super(key: key);
 
   @override
-  State State<JournalEditScreen> createState() => _JournalEditScreenState();
+  State<JournalEditScreen> createState() => _JournalEditScreenState();
 }
 
-class _JournalEditScreenState extends State State<JournalEditScreen> {
+class _JournalEditScreenState extends State<JournalEditScreen> {
   final _contentController = TextEditingController();
   final _locationController = TextEditingController();
   int? _selectedMoodId;
@@ -63,7 +63,7 @@ class _JournalEditScreenState extends State State<JournalEditScreen> {
       updatedAt: DateTime.now(),
     );
 
-    final provider = context.read.read<JournalProvider>();
+    final provider = context.read<JournalProvider>();
 
     if (_isEditing) {
       await provider.updateEntry(entry);

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/task_model.dart';
 import '../../providers/task_provider.dart';
-import '../../widgets/task_list_item.dart';
-import '../../widgets/empty_state.dart';
+import '../../widgets/tasks/task_list_item.dart';
+import '../../widgets/common/empty_state.dart';
 import 'task_edit_screen.dart';
 
 class TaskListScreen extends StatefulWidget {
@@ -76,7 +76,7 @@ class _TaskListScreenState extends State<TaskListScreen>
       return const EmptyState(
         icon: Icons.check_circle_outline,
         title: '暂无任务',
-        message: '点击右下角按钮创建新任务',
+        subtitle: '点击右下角按钮创建新任务',
       );
     }
     

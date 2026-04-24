@@ -16,7 +16,7 @@ class JournalDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer Consumer<JournalProvider>(
+    return Consumer<JournalProvider>(
       builder: (context, provider, child) {
         final entry = provider.getEntryById(entryId);
 

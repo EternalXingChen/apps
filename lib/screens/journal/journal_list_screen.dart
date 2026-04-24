@@ -87,7 +87,7 @@ class JournalListScreen extends ConsumerWidget {
   Widget _buildJournalList(
     BuildContext context,
     WidgetRef ref,
-    List List<JournalEntry> entries,
+    List<JournalEntry> entries,
   ) {
     // 按日期分组
     final groupedEntries = _groupEntriesByDate(entries);
@@ -124,8 +124,8 @@ class JournalListScreen extends ConsumerWidget {
     );
   }
 
-  List List<JournalGroup> _groupEntriesByDate(List(List<JournalEntry> entries) {
-    final groups = <String, List List<JournalEntry>>{};
+  List<JournalGroup> _groupEntriesByDate(List(List<JournalEntry> entries) {
+    final groups = <String, List<JournalEntry>>{};
 
     for (final entry in entries) {
       final date = _formatDate(entry.createdAt);
@@ -208,7 +208,7 @@ class JournalListScreen extends ConsumerWidget {
 
 class JournalGroup {
   final String date;
-  final List List<JournalEntry> entries;
+  final List<JournalEntry> entries;
 
   JournalGroup({required this.date, required this.entries});
 }

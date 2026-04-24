@@ -5,14 +5,14 @@ import '../services/database_service.dart';
 class TransactionProvider extends ChangeNotifier {
   final DatabaseService _db = DatabaseService();
   
-  List List<TransactionModel> _transactions = [];
+  List<TransactionModel> _transactions = [];
   bool _isLoading = false;
   String? _error;
   
   double _totalIncome = 0;
   double _totalExpense = 0;
 
-  List List<TransactionModel> get transactions => _transactions;
+  List<TransactionModel> get transactions => _transactions;
   bool get isLoading => _isLoading;
   String? get error => _error;
   double get totalIncome => _totalIncome;
@@ -91,7 +91,7 @@ class TransactionProvider extends ChangeNotifier {
     }
   }
 
-  List List<TransactionModel> getTransactionsForDate(DateTime date) {
+  List<TransactionModel> getTransactionsForDate(DateTime date) {
     return _transactions.where((t) {
       return t.timestamp.year == date.year &&
              t.timestamp.month == date.month &&

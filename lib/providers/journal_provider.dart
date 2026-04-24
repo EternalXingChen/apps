@@ -5,12 +5,12 @@ import '../services/database_service.dart';
 class JournalProvider extends ChangeNotifier {
   final DatabaseService _db = DatabaseService();
   
-  List List<JournalModel> _entries = [];
+  List<JournalModel> _entries = [];
   bool _isLoading = false;
   String? _error;
   JournalModel? _selectedEntry;
 
-  List List<JournalModel> get entries => _entries;
+  List<JournalModel> get entries => _entries;
   bool get isLoading => _isLoading;
   String? get error => _error;
   JournalModel? get selectedEntry => _selectedEntry;
@@ -81,7 +81,7 @@ class JournalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List List<JournalModel> getEntriesForDate(DateTime date) {
+  List<JournalModel> getEntriesForDate(DateTime date) {
     return _entries.where((entry) {
       return entry.createdAt.year == date.year &&
              entry.createdAt.month == date.month &&

@@ -118,6 +118,12 @@ class TaskModel {
     );
   }
 
+  bool get isOverdue {
+    if (dueDate == null || isCompleted) return false;
+    final now = DateTime.now();
+    return dueDate!.isBefore(DateTime(now.year, now.month, now.day));
+  }
+
   TaskModel copyWith({
     String? id,
     String? title,

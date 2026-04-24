@@ -16,12 +16,12 @@ class DatabaseService {
   Database? _database;
   final _securityUtils = SecurityUtils();
 
-  Future Future<Database> get database async {
+  Future<Database> get database async {
     _database ??= await _initDatabase();
     return _database!;
   }
 
-  Future Future<Database> _initDatabase() async {
+  Future<Database> _initDatabase() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'lifeflow.db');
 
@@ -155,7 +155,7 @@ class DatabaseService {
     return transaction.id;
   }
 
-  Future<List<List<TransactionModel>> getTransactions({
+  Future<List<TransactionModel>> getTransactions({
     DateTime? startDate,
     DateTime? endDate,
     String? categoryId,
@@ -243,7 +243,7 @@ class DatabaseService {
     return journal.id;
   }
 
-  Future<List<List<JournalModel>> getJournals({
+  Future<List<JournalModel>> getJournals({
     DateTime? startDate,
     DateTime? endDate,
     int? moodId,
@@ -292,7 +292,7 @@ class DatabaseService {
   Future<String> insertTask(TaskModel task) async {
     final db = await database;
     await db.insert('tasks', task.toJson());
-    return task.id;
+    return task.id!;
   }
 
   Future<List<TaskModel>> getTasks({
@@ -346,7 +346,7 @@ class DatabaseService {
   }
 
   // Category operations
-  Future<List<List<CategoryModel>> getCategories(String type) async {
+  Future<List<CategoryModel>> getCategories(String type) async {
     final db = await database;
     
     final List<Map<String, dynamic>> maps = await db.query(

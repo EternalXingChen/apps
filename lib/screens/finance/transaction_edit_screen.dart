@@ -12,10 +12,10 @@ class TransactionEditScreen extends StatefulWidget {
   const TransactionEditScreen({Key? key, this.transaction}) : super(key: key);
 
   @override
-  State State<TransactionEditScreen> createState() => _TransactionEditScreenState();
+  State<TransactionEditScreen> createState() => _TransactionEditScreenState();
 }
 
-class _TransactionEditScreenState extends State State<TransactionEditScreen> {
+class _TransactionEditScreenState extends State<TransactionEditScreen> {
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
   
@@ -44,7 +44,7 @@ class _TransactionEditScreenState extends State State<TransactionEditScreen> {
     
     // Load categories
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read.read<CategoryProvider>().loadCategories();
+      context.read<CategoryProvider>().loadCategories();
     });
   }
 
@@ -106,7 +106,7 @@ class _TransactionEditScreenState extends State State<TransactionEditScreen> {
       updatedAt: DateTime.now(),
     );
 
-    final provider = context.read.read<TransactionProvider>();
+    final provider = context.read<TransactionProvider>();
 
     if (_isEditing) {
       await provider.updateTransaction(transaction);
@@ -139,7 +139,7 @@ class _TransactionEditScreenState extends State State<TransactionEditScreen> {
           ),
         ],
       ),
-      body: Consumer Consumer<CategoryProvider>(
+      body: Consumer<CategoryProvider>(
         builder: (context, categoryProvider, child) {
           final categories = _type == TransactionType.expense
               ? categoryProvider.expenseCategories
@@ -151,7 +151,7 @@ class _TransactionEditScreenState extends State State<TransactionEditScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Type selector
-                SegmentedButtonButton<TransactionType>(
+                SegmentedButton<TransactionType>(
                   segments: const [
                     ButtonSegment(
                       value: TransactionType.expense,
@@ -165,7 +165,7 @@ class _TransactionEditScreenState extends State State<TransactionEditScreen> {
                     ),
                   ],
                   selected: {_type},
-                  onSelectionChanged: (SetSet<TransactionType> selected) {
+                  onSelectionChanged: (Set<TransactionType> selected) {
                     setState(() {
                       _type = selected.first;
                       _selectedCategoryId = null;
@@ -203,7 +203,7 @@ class _TransactionEditScreenState extends State State<TransactionEditScreen> {
                     children: categories.map((category) {
                       final isSelected = _selectedCategoryId == category.id;
                       return ChoiceChip(
-                        avatar: Text(category.icon),
+                        avatar: Text(category.icon ?? "📦"),
                         label: Text(category.name),
                         selected: isSelected,
                         selectedColor: _type == TransactionType.expense
@@ -225,7 +225,7 @@ class _TransactionEditScreenState extends State State<TransactionEditScreen> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 12),
-                SegmentedButtonButton<AccountType>(
+                SegmentedButton<AccountType>(
                   segments: AccountType.values.map((type) {
                     return ButtonSegment(
                       value: type,
@@ -233,7 +233,7 @@ class _TransactionEditScreenState extends State State<TransactionEditScreen> {
                     );
                   }).toList(),
                   selected: {_accountType},
-                  onSelectionChanged: (SetSet<AccountType> selected) {
+                  onSelectionChanged: (Set<AccountType> selected) {
                     setState(() {
                       _accountType = selected.first;
                     });

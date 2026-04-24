@@ -1,0 +1,2 @@
+/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/.cxx/RelWithDebInfo/43u691a3/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/.cxx/RelWithDebInfo/43u691a3/armeabi-v7a/CMakeFiles/rebuild_cache.dir

@@ -4,21 +4,24 @@ import 'package:intl/intl.dart';
 import '../../models/transaction_model.dart';
 import '../../providers/transaction_provider.dart';
 import '../../providers/category_provider.dart';
+import '../../services/database_service.dart';
 import '../../widgets/finance/transaction_list_item.dart';
-import 'transaction_edit_screen.dart';
+import 'transaction_edit_screen.dart' as transaction_edit show TransactionEditScreen;
 import 'finance_stats_screen.dart';
 import 'package:provider/provider.dart';
+
+typedef AddTransactionScreen = transaction_edit.TransactionEditScreen;
 
 class FinanceScreen extends StatefulWidget {
   const FinanceScreen({super.key});
 
   @override
-  State State<FinanceScreen> createState() => _FinanceScreenState();
+  State<FinanceScreen> createState() => _FinanceScreenState();
 }
 
-class _FinanceScreenState extends State State<FinanceScreen> {
+class _FinanceScreenState extends State<FinanceScreen> {
   final DatabaseService _dbService = DatabaseService();
-  List List<Transaction> _transactions = [];
+  List<TransactionModel> _transactions = [];
   bool _isLoading = true;
   double _totalIncome = 0;
   double _totalExpense = 0;
@@ -538,7 +541,7 @@ class _FinanceScreenState extends State State<FinanceScreen> {
     );
   }
 
-  Widget _buildTransactionItem(Transaction transaction) {
+  Widget _buildTransactionItem(TransactionModel transaction) {
     final isIncome = transaction.type == TransactionType.income;
     
     return Container(

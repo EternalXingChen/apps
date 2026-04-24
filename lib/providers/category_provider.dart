@@ -5,13 +5,13 @@ import '../services/database_service.dart';
 class CategoryProvider extends ChangeNotifier {
   final DatabaseService _db = DatabaseService();
   
-  List List<CategoryModel> _expenseCategories = [];
-  List List<CategoryModel> _incomeCategories = [];
+  List<CategoryModel> _expenseCategories = [];
+  List<CategoryModel> _incomeCategories = [];
   bool _isLoading = false;
   String? _error;
 
-  List List<CategoryModel> get expenseCategories => _expenseCategories;
-  List List<CategoryModel> get incomeCategories => _incomeCategories;
+  List<CategoryModel> get expenseCategories => _expenseCategories;
+  List<CategoryModel> get incomeCategories => _incomeCategories;
   bool get isLoading => _isLoading;
   String? get error => _error;
 

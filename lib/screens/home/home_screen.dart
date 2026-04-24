@@ -349,7 +349,7 @@ class _DashboardView extends StatelessWidget {
               child: _buildActionCard(
                 '新任务',
                 Icons.add_task_rounded,
-                AppTheme.accentColor,
+                AppTheme.secondaryColor,
                 () {},
               ),
             ),

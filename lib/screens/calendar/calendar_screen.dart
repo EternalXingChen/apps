@@ -12,15 +12,15 @@ class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
 
   @override
-  State State<CalendarScreen> createState() => _CalendarScreenState();
+  State<CalendarScreen> createState() => _CalendarScreenState();
 }
 
-class _CalendarScreenState extends State State<CalendarScreen> {
+class _CalendarScreenState extends State<CalendarScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  Map<DateTime, List List<CalendarEvent>> _events = {};
+  Map<DateTime, List<CalendarEvent>> _events = {};
 
   @override
   void initState() {
@@ -31,14 +31,14 @@ class _CalendarScreenState extends State State<CalendarScreen> {
 
   Future<void> _loadEvents() async {
     final taskProvider = context.read<TaskProvider>();
-    final journalProvider = context.read.read<JournalProvider>();
-    final transactionProvider = context.read.read<TransactionProvider>();
+    final journalProvider = context.read<JournalProvider>();
+    final transactionProvider = context.read<TransactionProvider>();
 
     await taskProvider.loadTasks();
     await journalProvider.loadEntries();
     await transactionProvider.loadTransactions();
 
-    final events = <DateTime, List List<CalendarEvent>>{};
+    final events = <DateTime, List<CalendarEvent>>{};
 
     // Add tasks
     for (final task in taskProvider.tasks) {
@@ -94,7 +94,7 @@ class _CalendarScreenState extends State State<CalendarScreen> {
     });
   }
 
-  List List<CalendarEvent> _getEventsForDay(DateTime day) {
+  List<CalendarEvent> _getEventsForDay(DateTime day) {
     final date = DateTime(day.year, day.month, day.day);
     return _events[date] ?? [];
   }
@@ -107,7 +107,7 @@ class _CalendarScreenState extends State State<CalendarScreen> {
       ),
       body: Column(
         children: [
-          TableCalendarCalendar<CalendarEvent>(
+          TableCalendar<CalendarEvent>(
             firstDay: DateTime.utc(2020, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
             focusedDay: _focusedDay,

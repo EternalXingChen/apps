@@ -14,7 +14,7 @@ class TaskDetailScreen extends StatefulWidget {
 }
 
 class _TaskDetailScreenState extends State<TaskDetailScreen> {
-  final _formKey = GlobalKeyKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   
@@ -95,7 +95,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
       // Schedule notification if due date is set
       if (_dueDate != null) {
-        await NotificationService.scheduleTaskReminder(task);
+        await NotificationService().scheduleTaskReminder(task);
       }
 
       if (mounted) {

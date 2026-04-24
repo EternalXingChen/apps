@@ -6,10 +6,10 @@ class AppLocalizations {
   AppLocalizations(this.locale);
 
   static AppLocalizations of(BuildContext context) {
-    return Localizations.of.of<AppLocalizations>(context, AppLocalizations)!;
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegateDelegate<AppLocalizations> delegate =
+  static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
 
   static final Map<String, Map<String, String>> _localizedValues = {
@@ -126,6 +126,9 @@ class AppLocalizations {
       'onboarding3Desc': '规划每日任务，提高工作效率',
       'onboarding4Title': '日历集成',
       'onboarding4Desc': '统一管理日程，不再错过重要事项',
+      'noJournalEntries': '暂无日记',
+      'startWritingToday': '开始记录今天的故事吧',
+      'write': '写作',
     },
     'en': {
       'appName': 'LifeFlow',
@@ -240,6 +243,9 @@ class AppLocalizations {
       'onboarding3Desc': 'Plan daily tasks, improve work efficiency',
       'onboarding4Title': 'Calendar Integration',
       'onboarding4Desc': 'Unified schedule management, never miss important events',
+      'noJournalEntries': 'No Journal Entries',
+      'startWritingToday': 'Start writing today',
+      'write': 'Write',
     },
   };
 
@@ -355,9 +361,12 @@ class AppLocalizations {
   String get onboarding3Desc => _localizedValues[locale.languageCode]?['onboarding3Desc'] ?? 'Plan daily tasks, improve work efficiency';
   String get onboarding4Title => _localizedValues[locale.languageCode]?['onboarding4Title'] ?? 'Calendar Integration';
   String get onboarding4Desc => _localizedValues[locale.languageCode]?['onboarding4Desc'] ?? 'Unified schedule management, never miss important events';
+  String get noJournalEntries => _localizedValues[locale.languageCode]?['noJournalEntries'] ?? 'No Journal Entries';
+  String get startWritingToday => _localizedValues[locale.languageCode]?['startWritingToday'] ?? 'Start writing today';
+  String get write => _localizedValues[locale.languageCode]?['write'] ?? 'Write';
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegateDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -366,7 +375,7 @@ class _AppLocalizationsDelegate extends LocalizationsDelegateDelegate<AppLocaliz
   }
 
   @override
-  Future Future<AppLocalizations> load(Locale locale) async {
+  Future<AppLocalizations> load(Locale locale) async {
     return AppLocalizations(locale);
   }
 

@@ -12,21 +12,21 @@ class JournalScreen extends StatefulWidget {
   const JournalScreen({Key? key}) : super(key: key);
 
   @override
-  State State<JournalScreen> createState() => _JournalScreenState();
+  State<JournalScreen> createState() => _JournalScreenState();
 }
 
-class _JournalScreenState extends State State<JournalScreen> {
+class _JournalScreenState extends State<JournalScreen> {
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
-      context.read.read<JournalProvider>().loadEntries();
+      context.read<JournalProvider>().loadEntries();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final journalProvider = context.watch.watch<JournalProvider>();
+    final journalProvider = context.watch<JournalProvider>();
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
@@ -59,7 +59,7 @@ class _JournalScreenState extends State State<JournalScreen> {
                 )
               : RefreshIndicator(
                   onRefresh: () async {
-                    await context.read.read<JournalProvider>().loadEntries();
+                    await context.read<JournalProvider>().loadEntries();
                   },
                   child: ListView.builder(
                     padding: const EdgeInsets.all(16),

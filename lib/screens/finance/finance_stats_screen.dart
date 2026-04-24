@@ -3,16 +3,16 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../providers/transaction_provider.dart';
 import '../../providers/category_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' show Consumer2, ReadContext;
 
 class FinanceStatsScreen extends StatefulWidget {
   const FinanceStatsScreen({Key? key}) : super(key: key);
 
   @override
-  State State<FinanceStatsScreen> createState() => _FinanceStatsScreenState();
+  State<FinanceStatsScreen> createState() => _FinanceStatsScreenState();
 }
 
-class _FinanceStatsScreenState extends State State<FinanceStatsScreen> {
+class _FinanceStatsScreenState extends State<FinanceStatsScreen> {
   int _selectedMonth = DateTime.now().month;
   int _selectedYear = DateTime.now().year;
 
@@ -25,8 +25,8 @@ class _FinanceStatsScreenState extends State State<FinanceStatsScreen> {
   }
 
   Future<void> _loadData() async {
-    final transactionProvider = context.read.read<TransactionProvider>();
-    final categoryProvider = context.read.read<CategoryProvider>();
+    final transactionProvider = context.read<TransactionProvider>();
+    final categoryProvider = context.read<CategoryProvider>();
     
     await transactionProvider.loadTransactions(
       startDate: DateTime(_selectedYear, _selectedMonth, 1),
@@ -41,7 +41,7 @@ class _FinanceStatsScreenState extends State State<FinanceStatsScreen> {
       appBar: AppBar(
         title: const Text('收支统计'),
       ),
-      body: Consumer22<TransactionProvider, CategoryProvider>(
+      body: Consumer2<TransactionProvider, CategoryProvider>(
         builder: (context, transactionProvider, categoryProvider, child) {
           if (transactionProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
