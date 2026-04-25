@@ -1,0 +1,10 @@
+{
+  "language": "chinese",
+  "env": {
+    "LANGUAGE": "chinese",
+    "CLAUDE_CODE_LANGUAGE": "zh-CN"
+  },
+  "outputStyle": "verbose",
+  "verbose": true,
+  "todoFeatureEnabled": true
+}
