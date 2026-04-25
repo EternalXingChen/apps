@@ -18,7 +18,7 @@ if errorlevel 1 (
 
 echo ✅ Flutter found
 flutter --version
-
+Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 5996 bytes (99.6% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-iconsFont asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 5996 bytes (99.6% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app. flag when building your app.
 cd /d "%~dp0"
 
 echo.

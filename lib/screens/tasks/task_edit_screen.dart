@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/task_model.dart';
 import '../../providers/task_provider.dart';
+import '../../services/notification_service.dart';
 
 class TaskEditScreen extends StatefulWidget {
   final TaskModel? task;
@@ -17,8 +18,10 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
   late final TextEditingController _titleController;
   late final TextEditingController _descriptionController;
   DateTime? _dueDate;
+  TimeOfDay? _dueTime;
   TaskPriority _priority = TaskPriority.medium;
   TaskRepeatRule _repeatRule = TaskRepeatRule.none;
+  int? _reminderMinutes;
 
   @override
   void initState() {
@@ -27,8 +30,10 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
     _titleController = TextEditingController(text: task?.title ?? '');
     _descriptionController = TextEditingController(text: task?.description ?? '');
     _dueDate = task?.dueDate;
+    _dueTime = task?.dueTime;
     _priority = task?.priority ?? TaskPriority.medium;
     _repeatRule = task?.repeatRule ?? TaskRepeatRule.none;
+    _reminderMinutes = task?.reminderMinutes;
   }
 
   @override
@@ -97,6 +102,36 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
               onTap: _selectDueDate,
             ),
             const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.access_time),
+              title: const Text('截止时间'),
+              subtitle: Text(_dueTime != null
+                  ? '${_dueTime!.hour.toString().padLeft(2, '0')}:${_dueTime!.minute.toString().padLeft(2, '0')}'
+                  : '未设置'),
+              trailing: _dueTime != null
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () => setState(() => _dueTime = null),
+                    )
+                  : null,
+              onTap: _selectDueTime,
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.notifications),
+              title: const Text('任务提醒'),
+              subtitle: Text(_reminderMinutes != null
+                  ? '提前 ${_getReminderText(_reminderMinutes!)}'
+                  : '未设置'),
+              trailing: _reminderMinutes != null
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () => setState(() => _reminderMinutes = null),
+                    )
+                  : null,
+              onTap: _selectReminder,
+            ),
+            const SizedBox(height: 16),
             const Text('优先级', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             SegmentedButton<TaskPriority>(
@@ -154,8 +189,10 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
           ? null
           : _descriptionController.text,
       dueDate: _dueDate,
+      dueTime: _dueTime,
       priority: _priority,
       repeatRule: _repeatRule,
+      reminderMinutes: _reminderMinutes,
       isCompleted: widget.task?.isCompleted ?? false,
       createdAt: widget.task?.createdAt ?? DateTime.now(),
       updatedAt: DateTime.now(),
@@ -168,8 +205,61 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
       await provider.addTask(task);
     }
 
+    // Schedule notification if due date and time are set
+    if (_dueDate != null && _dueTime != null && _reminderMinutes != null) {
+      await NotificationService().scheduleTaskReminder(task);
+    }
+
     if (mounted) {
       Navigator.pop(context);
+    }
+  }
+
+  String _getReminderText(int minutes) {
+    if (minutes < 60) return '$minutes 分钟';
+    if (minutes == 60) return '1 小时';
+    if (minutes < 1440) return '${minutes ~/ 60} 小时';
+    return '${minutes ~/ 1440} 天';
+  }
+
+  Future<void> _selectDueTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _dueTime ?? TimeOfDay.now(),
+    );
+    if (picked != null) {
+      setState(() => _dueTime = picked);
+    }
+  }
+
+  Future<void> _selectReminder() async {
+    final options = [15, 30, 60, 120, 1440, 2880];
+    final selected = await showDialog<int>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('选择提醒时间'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: options.map((minutes) => ListTile(
+            title: Text('提前 ${_getReminderText(minutes)}'),
+            leading: Radio<int>(
+              value: minutes,
+              groupValue: _reminderMinutes,
+              onChanged: (value) => Navigator.pop(context, value),
+            ),
+            onTap: () => Navigator.pop(context, minutes),
+          )).toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('取消'),
+          ),
+        ],
+      ),
+    );
+    if (selected != null) {
+      setState(() => _reminderMinutes = selected);
     }
   }
 }

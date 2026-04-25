@@ -31,7 +31,7 @@ class JournalCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: MoodSelector.getMoodColor(entry.moodId).withOpacity(0.2),
+                        color: MoodSelector.getMoodColor(entry.moodId).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -54,7 +54,7 @@ class JournalCard extends StatelessWidget {
                         Text(
                           DateFormat('EEEE HH:mm', 'zh_CN').format(entry.createdAt),
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                         ),
                       ],
@@ -98,7 +98,7 @@ class JournalCard extends StatelessWidget {
                     Icon(
                       Icons.location_on,
                       size: 14,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                     const SizedBox(width: 4),
                     Expanded(
@@ -108,7 +108,7 @@ class JournalCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     ),

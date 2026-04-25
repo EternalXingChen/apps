@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../models/transaction_model.dart';
+import '../../providers/task_provider.dart';
+import '../../providers/journal_provider.dart';
+import '../../providers/transaction_provider.dart';
 import '../finance/finance_screen.dart';
+import '../finance/transaction_edit_screen.dart';
 import '../journal/journal_screen.dart';
+import '../journal/journal_edit_screen.dart';
 import '../tasks/task_list_screen.dart';
+import '../tasks/task_edit_screen.dart';
 import '../calendar/calendar_screen.dart';
-import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, -5),
             ),
@@ -67,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -128,24 +135,113 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showAddTransactionDialog() {
-    // TODO: Show add transaction dialog
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TransactionEditScreen(),
+      ),
+    ).then((_) async {
+      // Always refresh data when returning from any screen
+      final taskProvider = context.read<TaskProvider>();
+      final journalProvider = context.read<JournalProvider>();
+      final transactionProvider = context.read<TransactionProvider>();
+
+      await Future.wait([
+        taskProvider.loadTasks(),
+        journalProvider.loadEntries(),
+        transactionProvider.loadTransactions(),
+      ]);
+
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   void _showAddJournalDialog() {
-    // TODO: Show add journal dialog
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const JournalEditScreen(),
+      ),
+    ).then((_) async {
+      // Always refresh data when returning from any screen
+      final taskProvider = context.read<TaskProvider>();
+      final journalProvider = context.read<JournalProvider>();
+      final transactionProvider = context.read<TransactionProvider>();
+
+      await Future.wait([
+        taskProvider.loadTasks(),
+        journalProvider.loadEntries(),
+        transactionProvider.loadTransactions(),
+      ]);
+
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   void _showAddTaskDialog() {
-    // TODO: Show add task dialog
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TaskEditScreen(),
+      ),
+    ).then((_) async {
+      // Always refresh data when returning from any screen
+      final taskProvider = context.read<TaskProvider>();
+      final journalProvider = context.read<JournalProvider>();
+      final transactionProvider = context.read<TransactionProvider>();
+
+      await Future.wait([
+        taskProvider.loadTasks(),
+        journalProvider.loadEntries(),
+        transactionProvider.loadTransactions(),
+      ]);
+
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   void _showAddEventDialog() {
-    // TODO: Show add event dialog
+    // Calendar screen already has its own FAB for adding events
+    // Navigate to calendar tab
+    setState(() => _currentIndex = 4);
   }
 }
 
-class _DashboardView extends StatelessWidget {
+class _DashboardView extends StatefulWidget {
   const _DashboardView();
+
+  @override
+  State<_DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<_DashboardView> {
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final taskProvider = context.read<TaskProvider>();
+    final journalProvider = context.read<JournalProvider>();
+    final transactionProvider = context.read<TransactionProvider>();
+
+    await Future.wait([
+      taskProvider.loadTasks(),
+      journalProvider.loadEntries(),
+      transactionProvider.loadTransactions(),
+    ]);
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -215,72 +311,111 @@ class _DashboardView extends StatelessWidget {
   }
 
   Widget _buildTodayOverview() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Consumer3<TransactionProvider, JournalProvider, TaskProvider>(
+      builder: (context, transactionProvider, journalProvider, taskProvider, child) {
+        final today = DateTime.now();
+        final todayTransactions = transactionProvider.transactions.where((t) {
+          return t.timestamp.year == today.year &&
+                 t.timestamp.month == today.month &&
+                 t.timestamp.day == today.day;
+        }).toList();
+        
+        final todayExpense = todayTransactions
+            .where((t) => t.type == TransactionType.expense)
+            .fold(0.0, (sum, t) => sum + t.amount);
+        
+        final todayJournals = journalProvider.entries.where((j) {
+          return j.createdAt.year == today.year &&
+                 j.createdAt.month == today.month &&
+                 j.createdAt.day == today.day;
+        }).toList();
+        
+        final todayTasks = taskProvider.tasks.where((t) {
+          if (t.dueDate == null) return false;
+          return t.dueDate!.year == today.year &&
+                 t.dueDate!.month == today.month &&
+                 t.dueDate!.day == today.day;
+        }).toList();
+        
+        final completedTasks = todayTasks.where((t) => t.isCompleted).length;
+
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.calendar_today_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.calendar_today_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    '今日概览',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              const Text(
-                '今日概览',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _navigateToFinance(),
+                      child: _buildOverviewItem(
+                        '💰',
+                        '今日支出',
+                        '¥${todayExpense.toStringAsFixed(2)}',
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _navigateToJournal(),
+                      child: _buildOverviewItem(
+                        '📝',
+                        '日记',
+                        '${todayJournals.length}篇',
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _navigateToTasks(),
+                      child: _buildOverviewItem(
+                        '✅',
+                        '待办',
+                        '$completedTasks/${todayTasks.length}',
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: _buildOverviewItem(
-                  '💰',
-                  '今日支出',
-                  '¥128.50',
-                ),
-              ),
-              Expanded(
-                child: _buildOverviewItem(
-                  '📝',
-                  '日记',
-                  '2篇',
-                ),
-              ),
-              Expanded(
-                child: _buildOverviewItem(
-                  '✅',
-                  '待办',
-                  '3/5',
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -305,7 +440,7 @@ class _DashboardView extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
         ),
       ],
@@ -332,7 +467,7 @@ class _DashboardView extends StatelessWidget {
                 '记一笔',
                 Icons.add_card_rounded,
                 AppTheme.primaryColor,
-                () {},
+                () => _navigateToAddTransaction(),
               ),
             ),
             const SizedBox(width: 12),
@@ -341,7 +476,7 @@ class _DashboardView extends StatelessWidget {
                 '写日记',
                 Icons.edit_note_rounded,
                 AppTheme.secondaryColor,
-                () {},
+                () => _navigateToAddJournal(),
               ),
             ),
             const SizedBox(width: 12),
@@ -350,7 +485,7 @@ class _DashboardView extends StatelessWidget {
                 '新任务',
                 Icons.add_task_rounded,
                 AppTheme.secondaryColor,
-                () {},
+                () => _navigateToAddTask(),
               ),
             ),
           ],
@@ -373,7 +508,7 @@ class _DashboardView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -395,6 +530,75 @@ class _DashboardView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _navigateToAddTransaction() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TransactionEditScreen(),
+      ),
+    ).then((_) async {
+      await _loadData();
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  void _navigateToAddJournal() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const JournalEditScreen(),
+      ),
+    ).then((_) async {
+      await _loadData();
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  void _navigateToAddTask() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TaskEditScreen(),
+      ),
+    ).then((_) async {
+      await _loadData();
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  void _navigateToFinance() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const FinanceScreen(),
+      ),
+    ).then((_) => _loadData());
+  }
+
+  void _navigateToJournal() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const JournalScreen(),
+      ),
+    ).then((_) => _loadData());
+  }
+
+  void _navigateToTasks() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TaskListScreen(),
+      ),
+    ).then((_) => _loadData());
   }
 
   Widget _buildRecentActivity() {
@@ -419,32 +623,107 @@ class _DashboardView extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        _buildActivityItem(
-          '💰',
-          '午餐',
-          '餐饮',
-          '-¥35.00',
-          '10:30',
-          isExpense: true,
-        ),
-        _buildActivityItem(
-          '📝',
-          '今日心情',
-          '日记',
-          '',
-          '09:15',
-          isExpense: false,
-        ),
-        _buildActivityItem(
-          '✅',
-          '完成项目报告',
-          '任务',
-          '',
-          '昨天',
-          isExpense: false,
-        ),
+        _buildRecentActivityList(),
       ],
     );
+  }
+
+  Widget _buildRecentActivityList() {
+    return Consumer3<TransactionProvider, JournalProvider, TaskProvider>(
+      builder: (context, transactionProvider, journalProvider, taskProvider, child) {
+        // Combine all activities and sort by date
+        final activities = <Map<String, dynamic>>[];
+
+        // Add transactions
+        for (var t in transactionProvider.transactions.take(5)) {
+          activities.add({
+            'type': 'transaction',
+            'emoji': t.type == TransactionType.expense ? '💰' : '💵',
+            'title': t.category,
+            'category': t.type == TransactionType.expense ? '支出' : '收入',
+            'amount': t.type == TransactionType.expense 
+                ? '-¥${t.amount.toStringAsFixed(2)}' 
+                : '+¥${t.amount.toStringAsFixed(2)}',
+            'time': t.timestamp,
+            'isExpense': t.type == TransactionType.expense,
+          });
+        }
+
+        // Add journals
+        for (var j in journalProvider.entries.take(5)) {
+          activities.add({
+            'type': 'journal',
+            'emoji': '📝',
+            'title': j.content.length > 20 
+                ? '${j.content.substring(0, 20)}...' 
+                : j.content,
+            'category': '日记',
+            'amount': '',
+            'time': j.createdAt,
+            'isExpense': false,
+          });
+        }
+
+        // Add tasks
+        for (var t in taskProvider.tasks.where((t) => t.isCompleted).take(5)) {
+          activities.add({
+            'type': 'task',
+            'emoji': '✅',
+            'title': t.title,
+            'category': '任务',
+            'amount': '',
+            'time': t.updatedAt ?? t.createdAt,
+            'isExpense': false,
+          });
+        }
+
+        // Sort by time (newest first)
+        activities.sort((a, b) => (b['time'] as DateTime).compareTo(a['time'] as DateTime));
+
+        // Take top 5
+        final recentActivities = activities.take(5).toList();
+
+        if (recentActivities.isEmpty) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                '暂无动态',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+          );
+        }
+
+        return Column(
+          children: recentActivities.map((activity) {
+            return _buildActivityItem(
+              activity['emoji'] as String,
+              activity['title'] as String,
+              activity['category'] as String,
+              activity['amount'] as String,
+              _formatTime(activity['time'] as DateTime),
+              isExpense: activity['isExpense'] as bool,
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  String _formatTime(DateTime time) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final activityDate = DateTime(time.year, time.month, time.day);
+
+    if (activityDate == today) {
+      return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+    } else if (activityDate == yesterday) {
+      return '昨天';
+    } else {
+      return '${time.month}/${time.day}';
+    }
   }
 
   Widget _buildActivityItem(

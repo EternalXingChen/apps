@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/transaction_model.dart';
@@ -291,8 +290,10 @@ class DatabaseService {
   // Task operations
   Future<String> insertTask(TaskModel task) async {
     final db = await database;
-    await db.insert('tasks', task.toJson());
-    return task.id!;
+    final taskId = task.id ?? DateTime.now().millisecondsSinceEpoch.toString();
+    final taskWithId = task.copyWith(id: taskId);
+    await db.insert('tasks', taskWithId.toJson());
+    return taskId;
   }
 
   Future<List<TaskModel>> getTasks({

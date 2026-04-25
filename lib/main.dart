@@ -8,6 +8,7 @@ import 'providers/task_provider.dart';
 import 'providers/transaction_provider.dart';
 import 'providers/journal_provider.dart';
 import 'providers/category_provider.dart';
+import 'providers/settings_provider.dart';
 import 'services/database_service.dart';
 import 'services/notification_service.dart';
 import 'screens/home/home_screen.dart';
@@ -17,6 +18,9 @@ import 'screens/finance/finance_screen.dart';
 import 'screens/journal/journal_screen.dart';
 import 'screens/calendar/calendar_screen.dart';
 import 'screens/settings/settings_screen.dart';
+
+// 全局导航键，用于通知点击导航
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,10 +55,12 @@ class LifeFlowApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TransactionProvider()),
         ChangeNotifierProvider(create: (_) => JournalProvider()),
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
       child: MaterialApp(
         title: 'LifeFlow',
         debugShowCheckedModeBanner: false,
+        navigatorKey: navigatorKey,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system,
@@ -72,7 +78,10 @@ class LifeFlowApp extends StatelessWidget {
         routes: {
           '/': (context) => const HomeScreen(),
           '/tasks': (context) => const TaskListScreen(),
-          '/tasks/edit': (context) => const TaskDetailScreen(),
+          '/tasks/edit': (context) {
+            final taskId = ModalRoute.of(context)?.settings.arguments as String?;
+            return TaskDetailScreen(taskId: taskId);
+          },
           '/finance': (context) => const FinanceScreen(),
           '/journal': (context) => const JournalScreen(),
           '/calendar': (context) => const CalendarScreen(),

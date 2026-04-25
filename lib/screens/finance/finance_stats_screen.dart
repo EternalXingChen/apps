@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
 import '../../providers/transaction_provider.dart';
 import '../../providers/category_provider.dart';
 import 'package:provider/provider.dart' show Consumer2, ReadContext;
@@ -174,7 +173,7 @@ class _FinanceStatsScreenState extends State<FinanceStatsScreen> {
                           Text(
                             '$percentage%',
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ],
@@ -210,7 +209,7 @@ class _FinanceStatsScreenState extends State<FinanceStatsScreen> {
                 Text(
                   title,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],

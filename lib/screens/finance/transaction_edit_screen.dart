@@ -207,8 +207,8 @@ class _TransactionEditScreenState extends State<TransactionEditScreen> {
                         label: Text(category.name),
                         selected: isSelected,
                         selectedColor: _type == TransactionType.expense
-                            ? Colors.red.withOpacity(0.2)
-                            : Colors.green.withOpacity(0.2),
+                            ? Colors.red.withValues(alpha: 0.2)
+                            : Colors.green.withValues(alpha: 0.2),
                         onSelected: (selected) {
                           setState(() {
                             _selectedCategoryId = selected ? category.id : null;

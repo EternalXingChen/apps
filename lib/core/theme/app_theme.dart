@@ -153,11 +153,9 @@ class AppTheme {
         primary: primaryColor,
         secondary: secondaryColor,
         surface: surfaceLight,
-        background: backgroundLight,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
         onSurface: textPrimaryLight,
-        onBackground: textPrimaryLight,
         error: error,
       ),
       scaffoldBackgroundColor: backgroundLight,
@@ -252,7 +250,7 @@ class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: surfaceLight,
-        selectedColor: primaryColor.withOpacity(0.1),
+        selectedColor: primaryColor.withValues(alpha: 0.1),
         labelStyle: textTheme.bodySmall,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         shape: RoundedRectangleBorder(
@@ -295,11 +293,9 @@ class AppTheme {
         primary: primaryLight,
         secondary: secondaryLight,
         surface: surfaceDark,
-        background: backgroundDark,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
         onSurface: textPrimaryDark,
-        onBackground: textPrimaryDark,
         error: error,
       ),
       scaffoldBackgroundColor: backgroundDark,
@@ -394,7 +390,7 @@ class AppTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: surfaceDark,
-        selectedColor: primaryLight.withOpacity(0.2),
+        selectedColor: primaryLight.withValues(alpha: 0.2),
         labelStyle: textTheme.bodySmall,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         shape: RoundedRectangleBorder(

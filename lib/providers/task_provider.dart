@@ -95,7 +95,18 @@ class TaskProvider extends ChangeNotifier {
     }).toList();
   }
 
-  List<TaskModel> getTodayTasks() {
-    return getTasksForDate(DateTime.now());
+  Future<TaskModel?> getTaskById(String taskId) async {
+    try {
+      final db = await _db.database;
+      final result = await db.query('tasks', where: 'id = ?', whereArgs: [taskId]);
+      if (result.isNotEmpty) {
+        return TaskModel.fromJson(result.first);
+      }
+      return null;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return null;
+    }
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/notification_service.dart';
-import 'theme/app_theme.dart';
 
 /// 应用初始化器
 /// 负责应用启动时的所有初始化工作

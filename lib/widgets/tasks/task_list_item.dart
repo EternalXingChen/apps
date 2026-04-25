@@ -41,7 +41,7 @@ class TaskListItem extends StatelessWidget {
             style: TextStyle(
               decoration: task.isCompleted ? TextDecoration.lineThrough : null,
               color: task.isCompleted 
-                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.5)
+                ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)
                 : null,
             ),
           ),
@@ -54,7 +54,7 @@ class TaskListItem extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               const SizedBox(height: 4),
@@ -79,7 +79,7 @@ class TaskListItem extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: task.priority.color.withOpacity(0.2),
+                      color: task.priority.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -95,13 +95,23 @@ class TaskListItem extends StatelessWidget {
               ),
             ],
           ),
-          trailing: task.repeatRule != TaskRepeatRule.none
-            ? Icon(
-                Icons.repeat,
-                size: 18,
-                color: Theme.of(context).colorScheme.primary,
-              )
-            : null,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (task.reminderMinutes != null)
+                Icon(
+                  Icons.notifications,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              if (task.repeatRule != TaskRepeatRule.none)
+                Icon(
+                  Icons.repeat,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+            ],
+          ),
           onTap: onTap,
         ),
       ),

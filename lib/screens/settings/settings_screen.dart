@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
+import '../../providers/settings_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -10,17 +12,17 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n?.settings ?? '设置'),
+        title: Text(l10n.settings),
       ),
       body: ListView(
         children: [
           // 外观设置
-          _buildSectionHeader(context, l10n?.theme ?? '外观'),
+          _buildSectionHeader(context, l10n.theme),
 
           // 深色模式
           SwitchListTile(
             secondary: const Icon(Icons.dark_mode),
-            title: Text(l10n?.theme ?? '深色模式'),
+            title: Text(l10n.theme),
             value: Theme.of(context).brightness == Brightness.dark,
             onChanged: (value) {
               // TODO: Implement theme switching
@@ -29,12 +31,33 @@ class SettingsScreen extends StatelessWidget {
 
           const Divider(),
 
+          // 日历设置
+          _buildSectionHeader(context, '日历设置'),
+
+          Consumer<SettingsProvider>(
+            builder: (context, settings, child) {
+              return ListTile(
+                leading: const Icon(Icons.calendar_today),
+                title: const Text('日历语言'),
+                subtitle: Text(settings.calendarLocale == 'zh_CN' ? '中文' : 'English'),
+                trailing: Switch(
+                  value: settings.calendarLocale == 'zh_CN',
+                  onChanged: (value) {
+                    settings.setCalendarLocale(value ? 'zh_CN' : 'en_US');
+                  },
+                ),
+              );
+            },
+          ),
+
+          const Divider(),
+
           // 语言设置
-          _buildSectionHeader(context, l10n?.language ?? '语言'),
+          _buildSectionHeader(context, l10n.language),
 
           ListTile(
             leading: const Icon(Icons.language),
-            title: Text(l10n?.language ?? '语言'),
+            title: Text(l10n.language),
             subtitle: const Text('中文'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showLanguagePicker(context),
@@ -43,11 +66,11 @@ class SettingsScreen extends StatelessWidget {
           const Divider(),
 
           // 通知设置
-          _buildSectionHeader(context, l10n?.notification ?? '通知'),
+          _buildSectionHeader(context, l10n.notification),
 
           SwitchListTile(
             secondary: const Icon(Icons.notifications),
-            title: Text(l10n?.notification ?? '启用通知'),
+            title: Text(l10n.notification),
             value: true,
             onChanged: (value) {
               // TODO: Implement notification toggle
@@ -61,7 +84,7 @@ class SettingsScreen extends StatelessWidget {
 
           ListTile(
             leading: const Icon(Icons.backup),
-            title: Text(l10n?.backup ?? '备份与恢复'),
+            title: Text(l10n.backup),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               // TODO: Navigate to backup screen
@@ -70,7 +93,7 @@ class SettingsScreen extends StatelessWidget {
 
           ListTile(
             leading: const Icon(Icons.sync),
-            title: Text(l10n?.sync ?? '同步'),
+            title: Text(l10n.sync),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               // TODO: Navigate to sync screen
@@ -79,9 +102,9 @@ class SettingsScreen extends StatelessWidget {
 
           ListTile(
             leading: const Icon(Icons.delete_outline, color: Colors.red),
-            title: Text(
+            title: const Text(
               '清除所有数据',
-              style: const TextStyle(color: Colors.red),
+              style: TextStyle(color: Colors.red),
             ),
             onTap: () => _showClearDataDialog(context, l10n),
           ),
@@ -89,17 +112,17 @@ class SettingsScreen extends StatelessWidget {
           const Divider(),
 
           // 关于
-          _buildSectionHeader(context, l10n?.about ?? '关于'),
+          _buildSectionHeader(context, l10n.about),
 
           ListTile(
             leading: const Icon(Icons.info),
-            title: Text(l10n?.version ?? '版本'),
+            title: Text(l10n.version),
             subtitle: const Text('1.0.0'),
           ),
 
           ListTile(
             leading: const Icon(Icons.privacy_tip),
-            title: Text('隐私政策'),
+            title: const Text('隐私政策'),
             onTap: () {
               // TODO: Open privacy policy
             },

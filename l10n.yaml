@@ -1,0 +1,20 @@
+# Localization configuration for Flutter
+# This file configures how Flutter generates localization code
+
+generate: true
+
+# The default locale for the app
+# This should match one of the supported locales
+arb-dir: ../l10n
+
+template-arb-file: app_zh.arb
+localized-arb-dir: ../l10n
+
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+
+# Enable null safety
+nullable-getter: false
+
+# Generate constant names for the keys
+use-deferred-loading: false

@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:provider/provider.dart';
 import '../../models/task_model.dart';
-import '../../models/journal_model.dart';
-import '../../models/transaction_model.dart';
 import '../../providers/task_provider.dart';
 import '../../providers/journal_provider.dart';
 import '../../providers/transaction_provider.dart';
+import '../../providers/settings_provider.dart';
+import '../../utils/chinese_holidays.dart';
+import '../journal/journal_edit_screen.dart';
+import '../tasks/task_edit_screen.dart';
+import '../finance/transaction_edit_screen.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({Key? key}) : super(key: key);
@@ -83,7 +86,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       );
       events.putIfAbsent(date, () => []);
       events[date]!.add(CalendarEvent(
-        title: '${transaction.categoryId}: ¥${transaction.amount}',
+        title: '${transaction.category}: ¥${transaction.amount}',
         type: EventType.transaction,
         item: transaction,
       ));
@@ -107,38 +110,187 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       body: Column(
         children: [
-          TableCalendar<CalendarEvent>(
-            firstDay: DateTime.utc(2020, 1, 1),
-            lastDay: DateTime.utc(2030, 12, 31),
-            focusedDay: _focusedDay,
-            calendarFormat: _calendarFormat,
-            selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
+          Consumer<SettingsProvider>(
+            builder: (context, settings, child) {
+              return TableCalendar<CalendarEvent>(
+                firstDay: DateTime.utc(2020, 1, 1),
+                lastDay: DateTime.utc(2030, 12, 31),
+                focusedDay: _focusedDay,
+                calendarFormat: _calendarFormat,
+                selectedDayPredicate: (day) {
+                  return isSameDay(_selectedDay, day);
+                },
+                onDaySelected: (selectedDay, focusedDay) {
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+                  });
+                  _showDayOptions(selectedDay);
+                },
+                onFormatChanged: (format) {
+                  setState(() {
+                    _calendarFormat = format;
+                  });
+                },
+                onPageChanged: (focusedDay) {
+                  _focusedDay = focusedDay;
+                },
+                eventLoader: _getEventsForDay,
+                calendarBuilders: CalendarBuilders(
+                  defaultBuilder: (context, day, focusedDay) {
+                    return _buildDayCell(day, false);
+                  },
+                  todayBuilder: (context, day, focusedDay) {
+                    return _buildDayCell(day, true);
+                  },
+                  selectedBuilder: (context, day, focusedDay) {
+                    return Container(
+                      margin: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '${day.day}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    );
+                  },
+                  outsideBuilder: (context, day, focusedDay) {
+                    return _buildDayCell(day, false, isOutside: true);
+                  },
+                ),
+                calendarStyle: const CalendarStyle(
+                  markersMaxCount: 3,
+                  cellMargin: EdgeInsets.all(4),
+                ),
+                locale: settings.calendarLocale == 'zh_CN' ? 'zh_CN' : 'en_US',
+              );
             },
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-            },
-            onFormatChanged: (format) {
-              setState(() {
-                _calendarFormat = format;
-              });
-            },
-            onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
-            },
-            eventLoader: _getEventsForDay,
-            calendarStyle: const CalendarStyle(
-              markersMaxCount: 3,
-            ),
           ),
           const SizedBox(height: 8),
           Expanded(
             child: _buildEventList(),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDayCell(DateTime day, bool isToday, {bool isOutside = false}) {
+    final isRestDay = ChineseHolidays.isRestDay(day);
+    final isHoliday = ChineseHolidays.isHoliday(day);
+    final holidayName = ChineseHolidays.getHolidayName(day);
+
+    Color? backgroundColor;
+    if (isHoliday) {
+      backgroundColor = Colors.red.shade100;
+    } else if (isRestDay) {
+      backgroundColor = Colors.grey.shade200;
+    }
+
+    return Container(
+      margin: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '${day.day}',
+            style: TextStyle(
+              color: isOutside
+                  ? Colors.grey.shade400
+                  : isToday
+                      ? Theme.of(context).colorScheme.primary
+                      : isHoliday
+                          ? Colors.red
+                          : null,
+              fontWeight: isToday ? FontWeight.bold : null,
+            ),
+          ),
+          if (holidayName != null)
+            Text(
+              holidayName,
+              style: TextStyle(
+                fontSize: 8,
+                color: Colors.red.shade700,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _showDayOptions(DateTime selectedDay) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(
+                '${selectedDay.year}年${selectedDay.month}月${selectedDay.day}日',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.edit, color: Colors.orange),
+              title: const Text('写日记'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => JournalEditScreen(selectedDate: selectedDay),
+                  ),
+                ).then((_) => _loadEvents());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.add_task, color: Colors.blue),
+              title: const Text('新建任务'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TaskEditScreen(
+                      task: TaskModel(
+                        title: '',
+                        dueDate: selectedDay,
+                      ),
+                    ),
+                  ),
+                ).then((_) => _loadEvents());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.account_balance_wallet, color: Colors.green),
+              title: const Text('记一笔'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TransactionEditScreen(),
+                  ),
+                ).then((_) => _loadEvents());
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

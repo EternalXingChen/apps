@@ -4,7 +4,6 @@ import '../../models/journal_model.dart';
 import '../../providers/journal_provider.dart';
 import '../../widgets/journal/journal_card.dart';
 import '../../widgets/common/empty_state.dart';
-import '../../l10n/app_localizations.dart';
 import 'journal_edit_screen.dart';
 import 'journal_detail_screen.dart';
 
@@ -16,6 +15,8 @@ class JournalScreen extends StatefulWidget {
 }
 
 class _JournalScreenState extends State<JournalScreen> {
+  DateTime? _selectedDate;
+
   @override
   void initState() {
     super.initState();
@@ -27,17 +28,24 @@ class _JournalScreenState extends State<JournalScreen> {
   @override
   Widget build(BuildContext context) {
     final journalProvider = context.watch<JournalProvider>();
-    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n?.journal ?? '日记'),
+        title: const Text('日记'),
         actions: [
+          if (_selectedDate != null)
+            IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                setState(() {
+                  _selectedDate = null;
+                });
+                context.read<JournalProvider>().loadEntries();
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.calendar_today),
-            onPressed: () {
-              // TODO: Navigate to journal calendar
-            },
+            onPressed: () => _selectDate(context),
           ),
           IconButton(
             icon: const Icon(Icons.search),
@@ -52,9 +60,9 @@ class _JournalScreenState extends State<JournalScreen> {
           : journalProvider.entries.isEmpty
               ? EmptyState(
                   icon: Icons.book_outlined,
-                  title: l10n?.noJournalEntries ?? '暂无日记',
-                  subtitle: l10n?.startWritingToday ?? '开始记录今天的故事吧',
-                  actionLabel: l10n?.writeJournal ?? '写日记',
+                  title: '暂无日记',
+                  subtitle: '开始记录今天的故事吧',
+                  actionLabel: '写日记',
                   onAction: () => _navigateToEditor(context),
                 )
               : RefreshIndicator(
@@ -76,7 +84,7 @@ class _JournalScreenState extends State<JournalScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _navigateToEditor(context),
         icon: const Icon(Icons.edit),
-        label: Text(l10n?.write ?? '写作'),
+        label: const Text('写作'),
       ),
     );
   }
@@ -85,7 +93,12 @@ class _JournalScreenState extends State<JournalScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const JournalEditScreen()),
-    );
+    ).then((_) async {
+      await context.read<JournalProvider>().loadEntries();
+      if (context.mounted) {
+        setState(() {});
+      }
+    });
   }
 
   void _navigateToDetail(BuildContext context, JournalModel entry) {
@@ -94,6 +107,34 @@ class _JournalScreenState extends State<JournalScreen> {
       MaterialPageRoute(
         builder: (context) => JournalDetailScreen(entryId: entry.id),
       ),
+    ).then((_) async {
+      await context.read<JournalProvider>().loadEntries();
+      if (context.mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
     );
+    if (date != null) {
+      setState(() {
+        _selectedDate = date;
+      });
+      final startDate = DateTime(date.year, date.month, date.day);
+      final endDate = startDate.add(const Duration(days: 1));
+      await context.read<JournalProvider>().loadEntries(
+        startDate: startDate,
+        endDate: endDate,
+      );
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 }

@@ -7,8 +7,9 @@ import 'package:provider/provider.dart';
 
 class JournalEditScreen extends StatefulWidget {
   final JournalModel? entry;
+  final DateTime? selectedDate;
 
-  const JournalEditScreen({Key? key, this.entry}) : super(key: key);
+  const JournalEditScreen({Key? key, this.entry, this.selectedDate}) : super(key: key);
 
   @override
   State<JournalEditScreen> createState() => _JournalEditScreenState();
@@ -50,6 +51,20 @@ class _JournalEditScreenState extends State<JournalEditScreen> {
       return;
     }
 
+    final now = DateTime.now();
+    final createdAt = widget.entry?.createdAt ?? widget.selectedDate ?? now;
+    // If selectedDate is provided, use that date with current time
+    final finalCreatedAt = widget.selectedDate != null && widget.entry == null
+        ? DateTime(
+            widget.selectedDate!.year,
+            widget.selectedDate!.month,
+            widget.selectedDate!.day,
+            now.hour,
+            now.minute,
+            now.second,
+          )
+        : createdAt;
+
     final entry = JournalModel(
       id: widget.entry?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
       content: _contentController.text.trim(),
@@ -59,7 +74,7 @@ class _JournalEditScreenState extends State<JournalEditScreen> {
           ? null
           : _locationController.text.trim(),
       isEncrypted: _isEncrypted,
-      createdAt: widget.entry?.createdAt ?? DateTime.now(),
+      createdAt: finalCreatedAt,
       updatedAt: DateTime.now(),
     );
 
@@ -76,11 +91,20 @@ class _JournalEditScreenState extends State<JournalEditScreen> {
     }
   }
 
+  String get _title {
+    if (_isEditing) return '编辑日记';
+    if (widget.selectedDate != null) {
+      final dateStr = DateFormat('MM月dd日').format(widget.selectedDate!);
+      return '$dateStr 的日记';
+    }
+    return '写日记';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? '编辑日记' : '写日记'),
+        title: Text(_title),
         actions: [
           IconButton(
             icon: Icon(_isEncrypted ? Icons.lock : Icons.lock_open),

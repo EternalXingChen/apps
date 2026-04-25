@@ -18,6 +18,13 @@ class JournalDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<JournalProvider>(
       builder: (context, provider, child) {
+        if (provider.isLoading) {
+          return Scaffold(
+            appBar: AppBar(),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
         final entry = provider.getEntryById(entryId);
 
         if (entry == null) {
@@ -30,7 +37,7 @@ class JournalDetailScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: Text(DateFormat('MM月dd日').format(entry.createdAt)),
-            actions: [
+            actions: _isToday(entry.createdAt) ? [
               IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () => _editEntry(context, entry),
@@ -39,7 +46,7 @@ class JournalDetailScreen extends StatelessWidget {
                 icon: const Icon(Icons.delete),
                 onPressed: () => _deleteEntry(context, provider, entry),
               ),
-            ],
+            ] : null,
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -52,7 +59,7 @@ class JournalDetailScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: MoodSelector.getMoodColor(entry.moodId).withOpacity(0.2),
+                          color: MoodSelector.getMoodColor(entry.moodId).withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Row(
@@ -139,14 +146,14 @@ class JournalDetailScreen extends StatelessWidget {
                 Text(
                   '创建于 ${DateFormat('yyyy年MM月dd日 HH:mm').format(entry.createdAt)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
                 if (entry.updatedAt != entry.createdAt)
                   Text(
                     '更新于 ${DateFormat('yyyy年MM月dd日 HH:mm').format(entry.updatedAt)}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
               ],
@@ -196,5 +203,10 @@ class JournalDetailScreen extends StatelessWidget {
         Navigator.pop(context);
       }
     }
+  }
+
+  bool _isToday(DateTime date) {
+    final now = DateTime.now();
+    return date.year == now.year && date.month == now.month && date.day == now.day;
   }
 }

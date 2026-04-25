@@ -60,6 +60,7 @@ class TaskModel {
   final TimeOfDay? dueTime;
   final TaskPriority priority;
   final TaskRepeatRule repeatRule;
+  final int? reminderMinutes;
   final bool isCompleted;
   final DateTime createdAt;
   final DateTime? updatedAt;
@@ -72,6 +73,7 @@ class TaskModel {
     this.dueTime,
     this.priority = TaskPriority.medium,
     this.repeatRule = TaskRepeatRule.none,
+    this.reminderMinutes,
     this.isCompleted = false,
     DateTime? createdAt,
     this.updatedAt,
@@ -88,6 +90,7 @@ class TaskModel {
           : null,
       'priority': priority.index,
       'repeatRule': repeatRule.name,
+      'reminderMinutes': reminderMinutes,
       'isCompleted': isCompleted ? 1 : 0,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
@@ -112,6 +115,7 @@ class TaskModel {
       dueTime: parsedTime,
       priority: TaskPriority.values[json['priority'] ?? 1],
       repeatRule: TaskRepeatRule.values.byName(json['repeatRule'] ?? 'none'),
+      reminderMinutes: json['reminderMinutes'],
       isCompleted: json['isCompleted'] == 1,
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
@@ -132,6 +136,7 @@ class TaskModel {
     TimeOfDay? dueTime,
     TaskPriority? priority,
     TaskRepeatRule? repeatRule,
+    int? reminderMinutes,
     bool? isCompleted,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -144,6 +149,7 @@ class TaskModel {
       dueTime: dueTime ?? this.dueTime,
       priority: priority ?? this.priority,
       repeatRule: repeatRule ?? this.repeatRule,
+      reminderMinutes: reminderMinutes ?? this.reminderMinutes,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../models/task_model.dart';
-import '../../services/task_service.dart';
+import '../../providers/task_provider.dart';
 import '../../services/notification_service.dart';
+import 'package:provider/provider.dart';
 
 class TaskDetailScreen extends StatefulWidget {
-  final TaskModel? task;
+  final String? taskId;
 
-  const TaskDetailScreen({Key? key, this.task}) : super(key: key);
+  const TaskDetailScreen({Key? key, this.taskId}) : super(key: key);
 
   @override
   State<TaskDetailScreen> createState() => _TaskDetailScreenState();
@@ -23,21 +24,45 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   TaskPriority _priority = TaskPriority.medium;
   TaskRepeatRule _repeatRule = TaskRepeatRule.none;
   bool _isCompleted = false;
+  TaskModel? _task;
+  bool _isLoading = true;
 
-  bool get _isEditing => widget.task != null;
+  bool get _isEditing => _task != null;
 
   @override
   void initState() {
     super.initState();
-    if (_isEditing) {
-      _titleController.text = widget.task!.title;
-      _descriptionController.text = widget.task!.description ?? '';
-      _dueDate = widget.task!.dueDate;
-      _dueTime = widget.task!.dueTime;
-      _priority = widget.task!.priority;
-      _repeatRule = widget.task!.repeatRule;
-      _isCompleted = widget.task!.isCompleted;
+    _loadTask();
+  }
+
+  Future<void> _loadTask() async {
+    if (widget.taskId != null) {
+      try {
+        final taskProvider = context.read<TaskProvider>();
+        final task = await taskProvider.getTaskById(widget.taskId!);
+        if (task != null) {
+          setState(() {
+            _task = task;
+            _titleController.text = task.title;
+            _descriptionController.text = task.description ?? '';
+            _dueDate = task.dueDate;
+            _dueTime = task.dueTime;
+            _priority = task.priority;
+            _repeatRule = task.repeatRule;
+            _isCompleted = task.isCompleted;
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('加载任务失败: $e')),
+          );
+        }
+      }
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -73,7 +98,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final task = TaskModel(
-      id: widget.task?.id,
+      id: _task?.id,
       title: _titleController.text.trim(),
       description: _descriptionController.text.trim().isEmpty
           ? null
@@ -83,14 +108,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       priority: _priority,
       repeatRule: _repeatRule,
       isCompleted: _isCompleted,
-      createdAt: widget.task?.createdAt ?? DateTime.now(),
+      createdAt: _task?.createdAt ?? DateTime.now(),
     );
 
     try {
+      final taskProvider = context.read<TaskProvider>();
       if (_isEditing) {
-        await TaskService.updateTask(task);
+        await taskProvider.updateTask(task);
       } else {
-        await TaskService.createTask(task);
+        await taskProvider.addTask(task);
       }
 
       // Schedule notification if due date is set
@@ -112,6 +138,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_isEditing ? '编辑任务' : '新建任务'),
@@ -239,7 +273,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     child: ChoiceChip(
                       label: Text(priority.label),
                       selected: _priority == priority,
-                      selectedColor: priority.color.withOpacity(0.2),
+                      selectedColor: priority.color.withValues(alpha: 0.2),
                       labelStyle: TextStyle(
                         color: _priority == priority
                             ? priority.color

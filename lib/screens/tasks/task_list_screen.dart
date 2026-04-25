@@ -101,16 +101,26 @@ class _TaskListScreenState extends State<TaskListScreen>
       MaterialPageRoute(
         builder: (context) => const TaskEditScreen(),
       ),
-    );
+    ).then((_) async {
+      await _loadTasks();
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
-  
+
   void _editTask(TaskModel task) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TaskEditScreen(task: task),
       ),
-    );
+    ).then((_) async {
+      await _loadTasks();
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
   
   Future<void> _toggleTaskComplete(TaskModel task) async {

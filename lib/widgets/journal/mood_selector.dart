@@ -48,7 +48,7 @@ class MoodSelector extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected ? mood.color.withOpacity(0.2) : Colors.grey.withOpacity(0.1),
+              color: isSelected ? mood.color.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: isSelected
                 ? Border.all(color: mood.color, width: 2)

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
+import '../main.dart';
 import '../models/task_model.dart';
 
 class NotificationService {
@@ -34,37 +35,51 @@ class NotificationService {
     // Handle notification tap
     final payload = response.payload;
     if (payload != null) {
-      final data = jsonDecode(payload);
-      // Navigate to relevant screen based on payload
+      try {
+        final data = jsonDecode(payload);
+        final taskId = data['taskId'];
+
+        if (taskId != null) {
+          // Navigate to task detail screen
+          navigatorKey.currentState?.pushNamed('/tasks/edit', arguments: taskId);
+        }
+      } catch (e) {
+        print('Error parsing notification payload: $e');
+      }
     }
   }
 
   Future<void> scheduleTaskReminder(TaskModel task) async {
-    if (task.dueTime == null) return;
+    if (task.dueDate == null || task.dueTime == null) return;
 
-    if (task.dueDate == null) return;
-    
+    // Cancel existing notifications for this task
+    await cancelTaskNotifications(task.id!);
+
     final scheduledDate = tz.TZDateTime.from(
       DateTime(
         task.dueDate!.year,
         task.dueDate!.month,
         task.dueDate!.day,
-        task.dueTime?.hour ?? 0,
-        task.dueTime?.minute ?? 0,
+        task.dueTime!.hour,
+        task.dueTime!.minute,
       ),
       tz.local,
     );
-    
-    // Schedule 15 minutes before
-    final reminder15Min = scheduledDate.subtract(const Duration(minutes: 15));
-    if (reminder15Min.isAfter(DateTime.now())) {
-      await _scheduleNotification(
-        id: task.id.hashCode + 1,
-        title: '即将到期: ${task.title}',
-        body: '任务将在15分钟后到期',
-        scheduledDate: reminder15Min,
-        payload: jsonEncode({'taskId': task.id, 'type': 'reminder'}),
+
+    // Schedule reminder before due time if reminderMinutes is set
+    if (task.reminderMinutes != null && task.reminderMinutes! > 0) {
+      final reminderDate = scheduledDate.subtract(
+        Duration(minutes: task.reminderMinutes!),
       );
+      if (reminderDate.isAfter(DateTime.now())) {
+        await _scheduleNotification(
+          id: task.id.hashCode + 1,
+          title: '任务提醒: ${task.title}',
+          body: '任务将在 ${_getReminderText(task.reminderMinutes!)} 后到期',
+          scheduledDate: reminderDate,
+          payload: jsonEncode({'taskId': task.id, 'type': 'reminder'}),
+        );
+      }
     }
 
     // Schedule at due time
@@ -72,13 +87,20 @@ class NotificationService {
       await _scheduleNotification(
         id: task.id.hashCode,
         title: '任务到期: ${task.title}',
-        body: task.priority == TaskPriority.high 
+        body: task.priority == TaskPriority.high
             ? '⚠️ 高优先级任务已到期'
             : '任务已到期',
         scheduledDate: scheduledDate,
         payload: jsonEncode({'taskId': task.id, 'type': 'due'}),
       );
     }
+  }
+
+  String _getReminderText(int minutes) {
+    if (minutes < 60) return '$minutes 分钟';
+    if (minutes == 60) return '1 小时';
+    if (minutes < 1440) return '${minutes ~/ 60} 小时';
+    return '${minutes ~/ 1440} 天';
   }
 
   Future<void> _scheduleNotification({

@@ -4,10 +4,7 @@ import 'package:intl/intl.dart';
 import '../../models/transaction_model.dart';
 import '../../providers/transaction_provider.dart';
 import '../../providers/category_provider.dart';
-import '../../services/database_service.dart';
-import '../../widgets/finance/transaction_list_item.dart';
 import 'transaction_edit_screen.dart' as transaction_edit show TransactionEditScreen;
-import 'finance_stats_screen.dart';
 import 'package:provider/provider.dart';
 
 typedef AddTransactionScreen = transaction_edit.TransactionEditScreen;
@@ -20,40 +17,15 @@ class FinanceScreen extends StatefulWidget {
 }
 
 class _FinanceScreenState extends State<FinanceScreen> {
-  final DatabaseService _dbService = DatabaseService();
-  List<TransactionModel> _transactions = [];
-  bool _isLoading = true;
-  double _totalIncome = 0;
-  double _totalExpense = 0;
   String _selectedPeriod = 'month';
 
   @override
   void initState() {
     super.initState();
-    _loadTransactions();
-  }
-
-  Future<void> _loadTransactions() async {
-    setState(() => _isLoading = true);
-    
-    final transactions = await _dbService.getTransactions();
-    
-    double income = 0;
-    double expense = 0;
-    
-    for (var t in transactions) {
-      if (t.type == TransactionType.income) {
-        income += t.amount;
-      } else {
-        expense += t.amount;
-      }
-    }
-    
-    setState(() {
-      _transactions = transactions;
-      _totalIncome = income;
-      _totalExpense = expense;
-      _isLoading = false;
+    // 加载分类和交易数据
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CategoryProvider>().loadCategories();
+      context.read<TransactionProvider>().loadTransactions();
     });
   }
 
@@ -61,15 +33,28 @@ class _FinanceScreenState extends State<FinanceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : CustomScrollView(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await context.read<TransactionProvider>().loadTransactions();
+            await context.read<CategoryProvider>().loadCategories();
+          },
+          child: Consumer2<TransactionProvider, CategoryProvider>(
+            builder: (context, transactionProvider, categoryProvider, child) {
+              if (transactionProvider.isLoading || categoryProvider.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final _transactions = transactionProvider.transactions;
+              final _totalIncome = transactionProvider.totalIncome;
+              final _totalExpense = transactionProvider.totalExpense;
+
+              return CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
                     child: _buildHeader(),
                   ),
                   SliverToBoxAdapter(
-                    child: _buildSummaryCards(),
+                    child: _buildSummaryCards(_totalIncome, _totalExpense),
                   ),
                   SliverToBoxAdapter(
                     child: _buildChart(),
@@ -78,25 +63,27 @@ class _FinanceScreenState extends State<FinanceScreen> {
                     child: _buildCategoryBreakdown(),
                   ),
                   SliverToBoxAdapter(
-                    child: _buildRecentTransactions(),
+                    child: _buildRecentTransactions(_transactions, categoryProvider),
                   ),
                 ],
-              ),
+              );
+            },
+          ),
+        ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final result = await Navigator.push(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => const AddTransactionScreen(),
             ),
-          );
-          if (result == true) {
-            _loadTransactions();
-          }
+          ).then((_) {
+            context.read<TransactionProvider>().loadTransactions();
+          });
         },
-        icon: const Icon(Icons.add),
-        label: const Text('记一笔'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -131,7 +118,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: DropdownButtonHideUnderline(
@@ -166,8 +153,8 @@ class _FinanceScreenState extends State<FinanceScreen> {
     );
   }
 
-  Widget _buildSummaryCards() {
-    final balance = _totalIncome - _totalExpense;
+  Widget _buildSummaryCards(double totalIncome, double totalExpense) {
+    final balance = totalIncome - totalExpense;
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -187,7 +174,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -222,7 +209,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
               Expanded(
                 child: _buildIncomeExpenseCard(
                   '收入',
-                  _totalIncome,
+                  totalIncome,
                   Icons.arrow_downward,
                   Colors.green,
                 ),
@@ -231,7 +218,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
               Expanded(
                 child: _buildIncomeExpenseCard(
                   '支出',
-                  _totalExpense,
+                  totalExpense,
                   Icons.arrow_upward,
                   Colors.red,
                 ),
@@ -252,7 +239,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -353,7 +340,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                     dotData: FlDotData(show: false),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: Colors.green.withOpacity(0.1),
+                      color: Colors.green.withValues(alpha: 0.1),
                     ),
                   ),
                   // 支出线
@@ -373,7 +360,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                     dotData: FlDotData(show: false),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: Colors.red.withOpacity(0.1),
+                      color: Colors.red.withValues(alpha: 0.1),
                     ),
                   ),
                 ],
@@ -513,7 +500,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
     );
   }
 
-  Widget _buildRecentTransactions() {
+  Widget _buildRecentTransactions(List<TransactionModel> transactions, CategoryProvider categoryProvider) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -535,14 +522,15 @@ class _FinanceScreenState extends State<FinanceScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          ..._transactions.take(5).map((t) => _buildTransactionItem(t)),
+          ...transactions.take(5).map((t) => _buildTransactionItem(t, categoryProvider)),
         ],
       ),
     );
   }
 
-  Widget _buildTransactionItem(TransactionModel transaction) {
+  Widget _buildTransactionItem(TransactionModel transaction, CategoryProvider categoryProvider) {
     final isIncome = transaction.type == TransactionType.income;
+    final categoryName = categoryProvider.getCategoryName(transaction.categoryId);
     
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -552,7 +540,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -564,7 +552,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: isIncome ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+              color: isIncome ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -578,7 +566,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  transaction.category,
+                  categoryName,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
