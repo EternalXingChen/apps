@@ -182,6 +182,21 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
   Future<void> _saveTask() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // 验证必填字段
+    if (_titleController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请输入任务标题')),
+      );
+      return;
+    }
+
+    if (_dueDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请选择截止日期')),
+      );
+      return;
+    }
+
     final task = TaskModel(
       id: widget.task?.id,
       title: _titleController.text,
@@ -207,7 +222,12 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
 
     // Schedule notification if due date and time are set
     if (_dueDate != null && _dueTime != null && _reminderMinutes != null) {
-      await NotificationService().scheduleTaskReminder(task);
+      try {
+        await NotificationService().scheduleTaskReminder(task);
+      } catch (e) {
+        // Ignore notification scheduling errors to prevent save failure
+        print('Failed to schedule notification: $e');
+      }
     }
 
     if (mounted) {

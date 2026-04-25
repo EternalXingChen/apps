@@ -1,0 +1,1 @@
+ /home/chen/ComateProjects/personal_manager/lifeflow_app/.dart_tool/flutter_build/42acc24c30f97622c62fad38a6326bb8/dart_build_result.json: 

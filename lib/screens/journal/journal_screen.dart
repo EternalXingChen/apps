@@ -81,11 +81,7 @@ class _JournalScreenState extends State<JournalScreen> {
                     },
                   ),
                 ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _navigateToEditor(context),
-        icon: const Icon(Icons.edit),
-        label: const Text('写作'),
-      ),
+      floatingActionButton: null, // FAB handled by HomeScreen
     );
   }
 

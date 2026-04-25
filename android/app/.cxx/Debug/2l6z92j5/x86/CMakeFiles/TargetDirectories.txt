@@ -1,0 +1,2 @@
+/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/.cxx/Debug/2l6z92j5/x86/CMakeFiles/edit_cache.dir
+/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/.cxx/Debug/2l6z92j5/x86/CMakeFiles/rebuild_cache.dir

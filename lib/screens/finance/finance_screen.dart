@@ -516,7 +516,7 @@ class _FinanceScreenState extends State<FinanceScreen> {
                     ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () => _showAllTransactions(),
                 child: const Text('查看全部'),
               ),
             ],
@@ -592,6 +592,88 @@ class _FinanceScreenState extends State<FinanceScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showAllTransactions() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) {
+          return Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '所有交易记录',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                Expanded(
+                  child: Consumer2<TransactionProvider, CategoryProvider>(
+                    builder: (context, transactionProvider, categoryProvider, child) {
+                      if (transactionProvider.transactions.isEmpty) {
+                        return const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.receipt_long,
+                                size: 64,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                '暂无交易记录',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        controller: scrollController,
+                        padding: const EdgeInsets.all(20),
+                        itemCount: transactionProvider.transactions.length,
+                        itemBuilder: (context, index) {
+                          final transaction = transactionProvider.transactions[index];
+                          return _buildTransactionItem(transaction, categoryProvider);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
