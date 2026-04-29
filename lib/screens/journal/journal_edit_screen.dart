@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../models/journal_model.dart';
 import '../../providers/journal_provider.dart';
@@ -21,6 +24,7 @@ class _JournalEditScreenState extends State<JournalEditScreen> {
   int? _selectedMoodId;
   bool _isEncrypted = false;
   List<String> _mediaUrls = [];
+  final ImagePicker _imagePicker = ImagePicker();
 
   bool get _isEditing => widget.entry != null;
 
@@ -185,15 +189,12 @@ class _JournalEditScreenState extends State<JournalEditScreen> {
                 children: _mediaUrls.map((url) {
                   return Stack(
                     children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          image: DecorationImage(
-                            image: NetworkImage(url),
-                            fit: BoxFit.cover,
-                          ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: _buildMediaPreview(url),
                         ),
                       ),
                       Positioned(
@@ -226,12 +227,7 @@ class _JournalEditScreenState extends State<JournalEditScreen> {
               const SizedBox(height: 16),
             ],
             OutlinedButton.icon(
-              onPressed: () {
-                // TODO: Implement image picker
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('图片选择功能待实现')),
-                );
-              },
+              onPressed: _showImageSourceOptions,
               icon: const Icon(Icons.add_photo_alternate),
               label: const Text('添加图片'),
             ),
@@ -239,5 +235,51 @@ class _JournalEditScreenState extends State<JournalEditScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildMediaPreview(String url) {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return Image.network(url, fit: BoxFit.cover);
+    }
+    return Image.file(File(url), fit: BoxFit.cover);
+  }
+
+  Future<void> _showImageSourceOptions() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('从相册选择'),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('拍照'),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (source != null) {
+      await _pickImage(source);
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await _imagePicker.pickImage(
+      source: source,
+      imageQuality: 80,
+    );
+    if (pickedFile != null) {
+      setState(() {
+        _mediaUrls.add(pickedFile.path);
+      });
+    }
   }
 }

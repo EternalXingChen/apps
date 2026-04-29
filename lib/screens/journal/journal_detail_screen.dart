@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../models/journal_model.dart';
@@ -112,10 +114,7 @@ class JournalDetailScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          entry.mediaUrls![index],
-                          fit: BoxFit.cover,
-                        ),
+                        child: _buildMediaImage(entry.mediaUrls![index]),
                       );
                     },
                   ),
@@ -203,6 +202,17 @@ class JournalDetailScreen extends StatelessWidget {
         Navigator.pop(context);
       }
     }
+  }
+
+  Widget _buildMediaImage(String url) {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return Image.network(url, fit: BoxFit.cover);
+    }
+    final file = File(url);
+    if (file.existsSync()) {
+      return Image.file(file, fit: BoxFit.cover);
+    }
+    return const Center(child: Icon(Icons.broken_image));
   }
 
   bool _isToday(DateTime date) {

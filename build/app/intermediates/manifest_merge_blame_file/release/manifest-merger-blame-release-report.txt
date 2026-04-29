@@ -1,0 +1,337 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.lifeflow"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:4:5-66
+11-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:5:5-78
+12-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:5:22-76
+13    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+13-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:6:5-80
+13-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:6:22-78
+14    <uses-permission android:name="android.permission.VIBRATE" />
+14-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:7:5-65
+14-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:7:22-63
+15    <uses-permission android:name="android.permission.WAKE_LOCK" />
+15-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:8:5-67
+15-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:8:22-65
+16    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+16-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:9:5-78
+16-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:9:22-76
+17    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+17-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:10:5-73
+17-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:10:22-71
+18    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+18-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:11:5-76
+18-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:11:22-74
+19    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+19-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:12:5-78
+19-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:12:22-76
+20    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+20-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:13:5-80
+20-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:13:22-78
+21    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+21-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:14:5-79
+21-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:14:22-77
+22    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+22-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:15:5-80
+22-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:15:22-78
+23    <uses-permission android:name="android.permission.CAMERA" />
+23-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:16:5-64
+23-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:16:22-62
+24
+25    <queries>
+25-->[:file_picker] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/file_picker/intermediates/merged_manifest/release/AndroidManifest.xml:7:5-13:15
+26        <intent>
+26-->[:file_picker] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/file_picker/intermediates/merged_manifest/release/AndroidManifest.xml:8:9-12:18
+27            <action android:name="android.intent.action.GET_CONTENT" />
+27-->[:file_picker] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/file_picker/intermediates/merged_manifest/release/AndroidManifest.xml:9:13-72
+27-->[:file_picker] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/file_picker/intermediates/merged_manifest/release/AndroidManifest.xml:9:21-69
+28
+29            <data android:mimeType="*/*" />
+29-->[:file_picker] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/file_picker/intermediates/merged_manifest/release/AndroidManifest.xml:11:13-44
+29-->[:file_picker] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/file_picker/intermediates/merged_manifest/release/AndroidManifest.xml:11:19-41
+30        </intent>
+31    </queries>
+32
+33    <permission
+33-->[androidx.core:core:1.13.1] /home/chen/.gradle/caches/transforms-3/a33dda76c06dff9afc0b602dd5b72de9/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+34        android:name="com.example.lifeflow.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+34-->[androidx.core:core:1.13.1] /home/chen/.gradle/caches/transforms-3/a33dda76c06dff9afc0b602dd5b72de9/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+35        android:protectionLevel="signature" />
+35-->[androidx.core:core:1.13.1] /home/chen/.gradle/caches/transforms-3/a33dda76c06dff9afc0b602dd5b72de9/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+36
+37    <uses-permission android:name="com.example.lifeflow.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+37-->[androidx.core:core:1.13.1] /home/chen/.gradle/caches/transforms-3/a33dda76c06dff9afc0b602dd5b72de9/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+37-->[androidx.core:core:1.13.1] /home/chen/.gradle/caches/transforms-3/a33dda76c06dff9afc0b602dd5b72de9/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+38
+39    <application
+40        android:name="android.app.Application"
+40-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:20:9-42
+41        android:allowBackup="true"
+41-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:23:9-35
+42        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+42-->[androidx.core:core:1.13.1] /home/chen/.gradle/caches/transforms-3/a33dda76c06dff9afc0b602dd5b72de9/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+43        android:dataExtractionRules="@xml/data_extraction_rules"
+43-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:25:9-65
+44        android:extractNativeLibs="true"
+45        android:fullBackupContent="@xml/backup_rules"
+45-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:24:9-54
+46        android:icon="@mipmap/ic_launcher"
+46-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:21:9-43
+47        android:label="LifeFlow"
+47-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:19:9-33
+48        android:requestLegacyExternalStorage="true"
+48-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:26:9-52
+49        android:roundIcon="@mipmap/ic_launcher_round" >
+49-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:22:9-54
+50        <activity
+50-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:28:9-45:20
+51            android:name="com.example.lifeflow.MainActivity"
+51-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:29:13-41
+52            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+52-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:33:13-163
+53            android:exported="true"
+53-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:30:13-36
+54            android:hardwareAccelerated="true"
+54-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:34:13-47
+55            android:launchMode="singleTop"
+55-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:31:13-43
+56            android:theme="@style/LaunchTheme"
+56-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:32:13-47
+57            android:windowSoftInputMode="adjustResize" >
+57-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:35:13-55
+58            <meta-data
+58-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:37:13-39:56
+59                android:name="io.flutter.embedding.android.NormalTheme"
+59-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:38:17-72
+60                android:resource="@style/NormalTheme" />
+60-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:39:17-54
+61
+62            <intent-filter>
+62-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:41:13-44:29
+63                <action android:name="android.intent.action.MAIN" />
+63-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:42:17-68
+63-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:42:25-66
+64
+65                <category android:name="android.intent.category.LAUNCHER" />
+65-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:43:17-76
+65-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:43:27-74
+66            </intent-filter>
+67        </activity>
+68
+69        <receiver
+69-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:47:9-53:20
+70            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+70-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:48:13-101
+71            android:exported="true" >
+71-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:49:13-36
+72            <intent-filter>
+72-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:50:13-52:29
+73                <action android:name="android.intent.action.BOOT_COMPLETED" />
+73-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:51:17-78
+73-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:51:25-76
+74            </intent-filter>
+75        </receiver>
+76        <receiver
+76-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:55:9-57:39
+77            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+77-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:56:13-97
+78            android:exported="false" />
+78-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:57:13-37
+79
+80        <meta-data
+80-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:59:9-61:32
+81            android:name="flutterEmbedding"
+81-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:60:13-44
+82            android:value="2" />
+82-->/home/chen/ComateProjects/personal_manager/lifeflow_app/android/app/src/main/AndroidManifest.xml:61:13-30
+83
+84        <service
+84-->[:geolocator_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/geolocator_android/intermediates/merged_manifest/release/AndroidManifest.xml:8:9-12:56
+85            android:name="com.baseflow.geolocator.GeolocatorLocationService"
+85-->[:geolocator_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/geolocator_android/intermediates/merged_manifest/release/AndroidManifest.xml:9:13-77
+86            android:enabled="true"
+86-->[:geolocator_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/geolocator_android/intermediates/merged_manifest/release/AndroidManifest.xml:10:13-35
+87            android:exported="false"
+87-->[:geolocator_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/geolocator_android/intermediates/merged_manifest/release/AndroidManifest.xml:11:13-37
+88            android:foregroundServiceType="location" />
+88-->[:geolocator_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/geolocator_android/intermediates/merged_manifest/release/AndroidManifest.xml:12:13-53
+89
+90        <provider
+90-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:9:9-17:20
+91            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
+91-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:10:13-82
+92            android:authorities="com.example.lifeflow.flutter.image_provider"
+92-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:11:13-74
+93            android:exported="false"
+93-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:12:13-37
+94            android:grantUriPermissions="true" >
+94-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:13:13-47
+95            <meta-data
+95-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:14:13-16:75
+96                android:name="android.support.FILE_PROVIDER_PATHS"
+96-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:15:17-67
+97                android:resource="@xml/flutter_image_picker_file_paths" />
+97-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:16:17-72
+98        </provider> <!-- Trigger Google Play services to install the backported photo picker module. -->
+99        <service
+99-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:19:9-31:19
+100            android:name="com.google.android.gms.metadata.ModuleDependencies"
+100-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:20:13-78
+101            android:enabled="false"
+101-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:21:13-36
+102            android:exported="false" >
+102-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:22:13-37
+103            <intent-filter>
+103-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:24:13-26:29
+104                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+104-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:25:17-94
+104-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:25:25-91
+105            </intent-filter>
+106
+107            <meta-data
+107-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:28:13-30:36
+108                android:name="photopicker_activity:0:required"
+108-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:29:17-63
+109                android:value="" />
+109-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:30:17-33
+110        </service>
+111        <!--
+112           Declares a provider which allows us to store files to share in
+113           '.../caches/share_plus' and grant the receiving action access
+114        -->
+115        <provider
+115-->[:share_plus] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/share_plus/intermediates/merged_manifest/release/AndroidManifest.xml:13:9-21:20
+116            android:name="dev.fluttercommunity.plus.share.ShareFileProvider"
+116-->[:share_plus] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/share_plus/intermediates/merged_manifest/release/AndroidManifest.xml:14:13-77
+117            android:authorities="com.example.lifeflow.flutter.share_provider"
+117-->[:share_plus] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/share_plus/intermediates/merged_manifest/release/AndroidManifest.xml:15:13-74
+118            android:exported="false"
+118-->[:share_plus] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/share_plus/intermediates/merged_manifest/release/AndroidManifest.xml:16:13-37
+119            android:grantUriPermissions="true" >
+119-->[:share_plus] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/share_plus/intermediates/merged_manifest/release/AndroidManifest.xml:17:13-47
+120            <meta-data
+120-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:14:13-16:75
+121                android:name="android.support.FILE_PROVIDER_PATHS"
+121-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:15:17-67
+122                android:resource="@xml/flutter_share_file_paths" />
+122-->[:image_picker_android] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/image_picker_android/intermediates/merged_manifest/release/AndroidManifest.xml:16:17-72
+123        </provider>
+124        <!--
+125           This manifest declared broadcast receiver allows us to use an explicit
+126           Intent when creating a PendingItent to be informed of the user's choice
+127        -->
+128        <receiver
+128-->[:share_plus] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/share_plus/intermediates/merged_manifest/release/AndroidManifest.xml:26:9-32:20
+129            android:name="dev.fluttercommunity.plus.share.SharePlusPendingIntent"
+129-->[:share_plus] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/share_plus/intermediates/merged_manifest/release/AndroidManifest.xml:27:13-82
+130            android:exported="false" >
+130-->[:share_plus] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/share_plus/intermediates/merged_manifest/release/AndroidManifest.xml:28:13-37
+131            <intent-filter>
+131-->[:share_plus] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/share_plus/intermediates/merged_manifest/release/AndroidManifest.xml:29:13-31:29
+132                <action android:name="EXTRA_CHOSEN_COMPONENT" />
+132-->[:share_plus] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/share_plus/intermediates/merged_manifest/release/AndroidManifest.xml:30:17-65
+132-->[:share_plus] /home/chen/ComateProjects/personal_manager/lifeflow_app/build/share_plus/intermediates/merged_manifest/release/AndroidManifest.xml:30:25-62
+133            </intent-filter>
+134        </receiver>
+135
+136        <activity
+136-->[com.google.android.gms:play-services-base:18.3.0] /home/chen/.gradle/caches/transforms-3/f506de7730dfbdeb42a1a13e56cf766a/transformed/jetified-play-services-base-18.3.0/AndroidManifest.xml:20:9-22:45
+137            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+137-->[com.google.android.gms:play-services-base:18.3.0] /home/chen/.gradle/caches/transforms-3/f506de7730dfbdeb42a1a13e56cf766a/transformed/jetified-play-services-base-18.3.0/AndroidManifest.xml:20:19-85
+138            android:exported="false"
+138-->[com.google.android.gms:play-services-base:18.3.0] /home/chen/.gradle/caches/transforms-3/f506de7730dfbdeb42a1a13e56cf766a/transformed/jetified-play-services-base-18.3.0/AndroidManifest.xml:22:19-43
+139            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+139-->[com.google.android.gms:play-services-base:18.3.0] /home/chen/.gradle/caches/transforms-3/f506de7730dfbdeb42a1a13e56cf766a/transformed/jetified-play-services-base-18.3.0/AndroidManifest.xml:21:19-78
+140
+141        <meta-data
+141-->[com.google.android.gms:play-services-basement:18.3.0] /home/chen/.gradle/caches/transforms-3/eaa61b30210d0565e26b518eade2bea6/transformed/jetified-play-services-basement-18.3.0/AndroidManifest.xml:21:9-23:69
+142            android:name="com.google.android.gms.version"
+142-->[com.google.android.gms:play-services-basement:18.3.0] /home/chen/.gradle/caches/transforms-3/eaa61b30210d0565e26b518eade2bea6/transformed/jetified-play-services-basement-18.3.0/AndroidManifest.xml:22:13-58
+143            android:value="@integer/google_play_services_version" />
+143-->[com.google.android.gms:play-services-basement:18.3.0] /home/chen/.gradle/caches/transforms-3/eaa61b30210d0565e26b518eade2bea6/transformed/jetified-play-services-basement-18.3.0/AndroidManifest.xml:23:13-66
+144
+145        <uses-library
+145-->[androidx.window:window:1.2.0] /home/chen/.gradle/caches/transforms-3/aa083e49431d98c636ee2be2a0d38a0d/transformed/jetified-window-1.2.0/AndroidManifest.xml:23:9-25:40
+146            android:name="androidx.window.extensions"
+146-->[androidx.window:window:1.2.0] /home/chen/.gradle/caches/transforms-3/aa083e49431d98c636ee2be2a0d38a0d/transformed/jetified-window-1.2.0/AndroidManifest.xml:24:13-54
+147            android:required="false" />
+147-->[androidx.window:window:1.2.0] /home/chen/.gradle/caches/transforms-3/aa083e49431d98c636ee2be2a0d38a0d/transformed/jetified-window-1.2.0/AndroidManifest.xml:25:13-37
+148        <uses-library
+148-->[androidx.window:window:1.2.0] /home/chen/.gradle/caches/transforms-3/aa083e49431d98c636ee2be2a0d38a0d/transformed/jetified-window-1.2.0/AndroidManifest.xml:26:9-28:40
+149            android:name="androidx.window.sidecar"
+149-->[androidx.window:window:1.2.0] /home/chen/.gradle/caches/transforms-3/aa083e49431d98c636ee2be2a0d38a0d/transformed/jetified-window-1.2.0/AndroidManifest.xml:27:13-51
+150            android:required="false" />
+150-->[androidx.window:window:1.2.0] /home/chen/.gradle/caches/transforms-3/aa083e49431d98c636ee2be2a0d38a0d/transformed/jetified-window-1.2.0/AndroidManifest.xml:28:13-37
+151
+152        <provider
+152-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/chen/.gradle/caches/transforms-3/161f0f5bd13a50175c805b21b4962707/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:24:9-32:20
+153            android:name="androidx.startup.InitializationProvider"
+153-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/chen/.gradle/caches/transforms-3/161f0f5bd13a50175c805b21b4962707/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:25:13-67
+154            android:authorities="com.example.lifeflow.androidx-startup"
+154-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/chen/.gradle/caches/transforms-3/161f0f5bd13a50175c805b21b4962707/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:26:13-68
+155            android:exported="false" >
+155-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/chen/.gradle/caches/transforms-3/161f0f5bd13a50175c805b21b4962707/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:27:13-37
+156            <meta-data
+156-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/chen/.gradle/caches/transforms-3/161f0f5bd13a50175c805b21b4962707/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:29:13-31:52
+157                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+157-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/chen/.gradle/caches/transforms-3/161f0f5bd13a50175c805b21b4962707/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:30:17-78
+158                android:value="androidx.startup" />
+158-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/chen/.gradle/caches/transforms-3/161f0f5bd13a50175c805b21b4962707/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:31:17-49
+159            <meta-data
+159-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+160                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+160-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+161                android:value="androidx.startup" />
+161-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+162        </provider>
+163
+164        <receiver
+164-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+165            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+165-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+166            android:directBootAware="false"
+166-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+167            android:enabled="true"
+167-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+168            android:exported="true"
+168-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+169            android:permission="android.permission.DUMP" >
+169-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+170            <intent-filter>
+170-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+171                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+171-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+171-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+172            </intent-filter>
+173            <intent-filter>
+173-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+174                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+174-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+174-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+175            </intent-filter>
+176            <intent-filter>
+176-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+177                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+177-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+177-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+178            </intent-filter>
+179            <intent-filter>
+179-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+180                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+180-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+180-->[androidx.profileinstaller:profileinstaller:1.4.0] /home/chen/.gradle/caches/transforms-3/c09d8bab236482e5d819a6a979cb0bf5/transformed/jetified-profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
+181            </intent-filter>
+182        </receiver>
+183    </application>
+184
+185</manifest>

@@ -6,6 +6,7 @@ import '../../widgets/journal/journal_card.dart';
 import '../../widgets/common/empty_state.dart';
 import 'journal_edit_screen.dart';
 import 'journal_detail_screen.dart';
+import 'journal_search_screen.dart';
 
 class JournalScreen extends StatefulWidget {
   const JournalScreen({Key? key}) : super(key: key);
@@ -50,7 +51,12 @@ class _JournalScreenState extends State<JournalScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // TODO: Navigate to journal search
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const JournalSearchScreen(),
+                ),
+              );
             },
           ),
         ],

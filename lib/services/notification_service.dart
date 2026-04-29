@@ -52,6 +52,8 @@ class NotificationService {
   Future<void> scheduleTaskReminder(TaskModel task) async {
     if (task.dueDate == null || task.dueTime == null) return;
 
+    final useSound = task.notificationSound != '静音';
+
     // Cancel existing notifications for this task
     await cancelTaskNotifications(task.id!);
 
@@ -78,6 +80,7 @@ class NotificationService {
           body: '任务将在 ${_getReminderText(task.reminderMinutes!)} 后到期',
           scheduledDate: reminderDate,
           payload: jsonEncode({'taskId': task.id, 'type': 'reminder'}),
+          useDefaultSound: useSound,
         );
       }
     }
@@ -92,6 +95,7 @@ class NotificationService {
             : '任务已到期',
         scheduledDate: scheduledDate,
         payload: jsonEncode({'taskId': task.id, 'type': 'due'}),
+        useDefaultSound: useSound,
       );
     }
   }
@@ -109,23 +113,25 @@ class NotificationService {
     required String body,
     required tz.TZDateTime scheduledDate,
     String? payload,
+    bool useDefaultSound = true,
   }) async {
-    const androidDetails = AndroidNotificationDetails(
+    final androidDetails = AndroidNotificationDetails(
       'task_channel',
       '任务提醒',
       channelDescription: '任务到期和提醒通知',
       importance: Importance.high,
       priority: Priority.high,
+      playSound: useDefaultSound,
       showWhen: true,
     );
 
-    const iosDetails = DarwinNotificationDetails(
+    final iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
-      presentSound: true,
+      presentSound: useDefaultSound,
     );
 
-    const details = NotificationDetails(
+    final details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
@@ -152,18 +158,24 @@ class NotificationService {
     required String title,
     required String body,
     String? payload,
+    bool useDefaultSound = true,
   }) async {
-    const androidDetails = AndroidNotificationDetails(
+    final androidDetails = AndroidNotificationDetails(
       'general_channel',
       '一般通知',
       channelDescription: '一般应用通知',
       importance: Importance.defaultImportance,
       priority: Priority.defaultPriority,
+      playSound: useDefaultSound,
     );
 
-    const iosDetails = DarwinNotificationDetails();
+    final iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: useDefaultSound,
+    );
 
-    const details = NotificationDetails(
+    final details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );

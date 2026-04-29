@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/theme/app_theme.dart';
+import 'l10n/app_localizations.dart';
 import 'providers/task_provider.dart';
 import 'providers/transaction_provider.dart';
 import 'providers/journal_provider.dart';
@@ -57,35 +58,40 @@ class LifeFlowApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
-      child: MaterialApp(
-        title: 'LifeFlow',
-        debugShowCheckedModeBanner: false,
-        navigatorKey: navigatorKey,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        locale: const Locale('zh', 'CN'),
-        supportedLocales: const [
-          Locale('zh', 'CN'),
-          Locale('en', 'US'),
-        ],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const HomeScreen(),
-          '/tasks': (context) => const TaskListScreen(),
-          '/tasks/edit': (context) {
-            final taskId = ModalRoute.of(context)?.settings.arguments as String?;
-            return TaskDetailScreen(taskId: taskId);
-          },
-          '/finance': (context) => const FinanceScreen(),
-          '/journal': (context) => const JournalScreen(),
-          '/calendar': (context) => const CalendarScreen(),
-          '/settings': (context) => const SettingsScreen(),
+      child: Consumer<SettingsProvider>(
+        builder: (context, settings, child) {
+          return MaterialApp(
+            title: 'LifeFlow',
+            debugShowCheckedModeBanner: false,
+            navigatorKey: navigatorKey,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: settings.themeMode,
+            locale: settings.locale,
+            supportedLocales: const [
+              Locale('zh', 'CN'),
+              Locale('en', 'US'),
+            ],
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            initialRoute: '/',
+            routes: {
+              '/': (context) => const HomeScreen(),
+              '/tasks': (context) => const TaskListScreen(),
+              '/tasks/edit': (context) {
+                final taskId = ModalRoute.of(context)?.settings.arguments as String?;
+                return TaskDetailScreen(taskId: taskId);
+              },
+              '/finance': (context) => const FinanceScreen(),
+              '/journal': (context) => const JournalScreen(),
+              '/calendar': (context) => const CalendarScreen(),
+              '/settings': (context) => const SettingsScreen(),
+            },
+          );
         },
       ),
     );

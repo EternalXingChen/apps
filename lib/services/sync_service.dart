@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/sync_config.dart';
+import 'database_service.dart';
 
 class SyncService {
   static final SyncService _instance = SyncService._internal();
@@ -10,6 +11,7 @@ class SyncService {
 
   Timer? _syncTimer;
   bool _isSyncing = false;
+  final DatabaseService _databaseService = DatabaseService();
 
   // 开始自动同步
   void startAutoSync(SyncConfig config, Function onSync) {
@@ -76,22 +78,45 @@ class SyncService {
 
   // WebDAV 同步
   Future<bool> _syncToWebDAV(SyncConfig config) async {
-    if (config.serverUrl == null) return false;
+    if (config.serverUrl == null || config.username == null || config.password == null) {
+      return false;
+    }
 
     try {
-      final response = await http.put(
+      // 导出本地数据
+      final exportJson = await exportData();
+
+      // 上传数据到服务器
+      final uploadResponse = await http.put(
         Uri.parse('${config.serverUrl}/lifeflow_backup.json'),
         headers: {
           'Authorization': 'Basic ${base64Encode(utf8.encode('${config.username}:${config.password}'))}',
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({
-          'timestamp': DateTime.now().toIso8601String(),
-          'version': '1.0.0',
-        }),
+        body: exportJson,
       );
 
-      return response.statusCode == 200 || response.statusCode == 201;
+      if (uploadResponse.statusCode != 200 && uploadResponse.statusCode != 201) {
+        print('Upload failed: ${uploadResponse.statusCode}');
+        return false;
+      }
+
+      // 下载服务器数据
+      final downloadResponse = await http.get(
+        Uri.parse('${config.serverUrl}/lifeflow_backup.json'),
+        headers: {
+          'Authorization': 'Basic ${base64Encode(utf8.encode('${config.username}:${config.password}'))}',
+        },
+      );
+
+      if (downloadResponse.statusCode == 200) {
+        final success = await importData(downloadResponse.body);
+        if (!success) {
+          print('Failed to import server data');
+        }
+      }
+
+      return true;
     } catch (e) {
       print('WebDAV sync error: $e');
       return false;
@@ -99,7 +124,8 @@ class SyncService {
   }
 
   // 导出数据
-  Future<String> exportData(Map<String, dynamic> data) async {
+  Future<String> exportData() async {
+    final data = await _databaseService.exportData();
     final exportData = {
       'version': '1.0.0',
       'exportDate': DateTime.now().toIso8601String(),
@@ -110,18 +136,22 @@ class SyncService {
   }
 
   // 导入数据
-  Future<Map<String, dynamic>?> importData(String jsonString) async {
+  Future<bool> importData(String jsonString) async {
     try {
-      final data = jsonDecode(jsonString) as Map<String, dynamic>;
+      final decoded = jsonDecode(jsonString) as Map<String, dynamic>;
       
       // 验证版本兼容性
-      final version = data['version'] as String?;
-      if (version == null) return null;
+      final version = decoded['version'] as String?;
+      if (version == null) return false;
 
-      return data['data'] as Map<String, dynamic>?;
+      final data = decoded['data'] as Map<String, dynamic>?;
+      if (data == null) return false;
+
+      await _databaseService.importData(data);
+      return true;
     } catch (e) {
       print('Import error: $e');
-      return null;
+      return false;
     }
   }
 

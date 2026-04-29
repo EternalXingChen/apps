@@ -61,6 +61,7 @@ class TaskModel {
   final TaskPriority priority;
   final TaskRepeatRule repeatRule;
   final int? reminderMinutes;
+  final String? notificationSound;
   final bool isCompleted;
   final DateTime createdAt;
   final DateTime? updatedAt;
@@ -74,6 +75,7 @@ class TaskModel {
     this.priority = TaskPriority.medium,
     this.repeatRule = TaskRepeatRule.none,
     this.reminderMinutes,
+    this.notificationSound,
     this.isCompleted = false,
     DateTime? createdAt,
     this.updatedAt,
@@ -91,6 +93,7 @@ class TaskModel {
       'priority': priority.index,
       'repeatRule': repeatRule.name,
       'reminderMinutes': reminderMinutes,
+      'notificationSound': notificationSound,
       'isCompleted': isCompleted ? 1 : 0,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
@@ -116,6 +119,7 @@ class TaskModel {
       priority: TaskPriority.values[json['priority'] ?? 1],
       repeatRule: TaskRepeatRule.values.byName(json['repeatRule'] ?? 'none'),
       reminderMinutes: json['reminderMinutes'],
+      notificationSound: json['notificationSound'] ?? '默认铃声',
       isCompleted: json['isCompleted'] == 1,
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
@@ -150,6 +154,7 @@ class TaskModel {
       priority: priority ?? this.priority,
       repeatRule: repeatRule ?? this.repeatRule,
       reminderMinutes: reminderMinutes ?? this.reminderMinutes,
+      notificationSound: notificationSound ?? this.notificationSound,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

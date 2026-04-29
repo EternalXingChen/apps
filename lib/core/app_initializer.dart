@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/notification_service.dart';
+import '../services/sync_service.dart';
+import '../services/database_service.dart';
 
 /// 应用初始化器
 /// 负责应用启动时的所有初始化工作
@@ -24,6 +26,9 @@ class AppInitializer {
       // 初始化通知服务
       await _initializeNotifications();
 
+      // 初始化同步服务
+      await _initializeSync();
+
       // 预加载主题
       _preloadTheme(context);
 
@@ -39,6 +44,18 @@ class AppInitializer {
   Future<void> _initializeNotifications() async {
     final notificationService = NotificationService();
     await notificationService.initialize();
+  }
+
+  /// 初始化同步服务
+  Future<void> _initializeSync() async {
+    final db = DatabaseService();
+    final config = await db.getSyncConfig();
+    if (config != null && config.autoSync) {
+      SyncService().startAutoSync(config, () {
+        // 同步完成后的回调，可以用来刷新UI
+        debugPrint('Auto sync completed');
+      });
+    }
   }
 
   /// 预加载主题

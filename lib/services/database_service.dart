@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/transaction_model.dart';
 import '../models/journal_model.dart';
 import '../models/task_model.dart';
 import '../models/category_model.dart';
+import '../models/sync_config.dart';
 import '../utils/security_utils.dart';
 
 class DatabaseService {
@@ -26,7 +28,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -51,6 +53,7 @@ class DatabaseService {
       CREATE TABLE transactions (
         id TEXT PRIMARY KEY,
         amount REAL NOT NULL,
+        type TEXT NOT NULL,
         categoryId TEXT NOT NULL,
         accountType TEXT NOT NULL,
         timestamp TEXT NOT NULL,
@@ -84,12 +87,14 @@ class DatabaseService {
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         description TEXT,
+        dueDate TEXT,
         dueTime TEXT,
         priority INTEGER DEFAULT 0,
         repeatRule TEXT,
         categoryId TEXT,
         isCompleted INTEGER DEFAULT 0,
         reminderMinutes INTEGER,
+        notificationSound TEXT,
         createdAt TEXT NOT NULL,
         updatedAt TEXT NOT NULL,
         FOREIGN KEY (categoryId) REFERENCES categories(id)
@@ -136,7 +141,9 @@ class DatabaseService {
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Handle database upgrades
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE tasks ADD COLUMN notificationSound TEXT');
+    }
   }
 
   // Transaction operations
@@ -383,6 +390,27 @@ class DatabaseService {
       return maps.first['value'] as String;
     }
     return null;
+  }
+
+  // Sync configuration
+  Future<void> saveSyncConfig(SyncConfig config) async {
+    final db = await database;
+    await db.insert(
+      'settings',
+      {'key': 'sync_config', 'value': jsonEncode(config.toJson())},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<SyncConfig?> getSyncConfig() async {
+    final jsonString = await getSetting('sync_config');
+    if (jsonString == null) return null;
+    try {
+      final data = jsonDecode(jsonString) as Map<String, dynamic>;
+      return SyncConfig.fromJson(data);
+    } catch (e) {
+      return null;
+    }
   }
 
   // Backup and restore

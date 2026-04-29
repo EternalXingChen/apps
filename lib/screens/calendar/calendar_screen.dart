@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:provider/provider.dart';
 import '../../models/task_model.dart';
+import '../../models/transaction_model.dart';
 import '../../providers/task_provider.dart';
 import '../../providers/journal_provider.dart';
 import '../../providers/transaction_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../utils/chinese_holidays.dart';
+import '../journal/journal_detail_screen.dart';
 import '../journal/journal_edit_screen.dart';
+import '../tasks/task_detail_screen.dart';
 import '../tasks/task_edit_screen.dart';
 import '../finance/transaction_edit_screen.dart';
 
@@ -84,9 +87,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
         transaction.timestamp.month,
         transaction.timestamp.day,
       );
+      final actionLabel = transaction.type == TransactionType.expense ? '支出' : '收入';
       events.putIfAbsent(date, () => []);
       events[date]!.add(CalendarEvent(
-        title: '${transaction.category}: ¥${transaction.amount}',
+        title: '$actionLabel · ${transaction.category}: ¥${transaction.amount}',
         type: EventType.transaction,
         item: transaction,
       ));
@@ -317,7 +321,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               color: _getEventColor(event.type),
             ),
             title: Text(event.title),
-            subtitle: Text(_getEventTypeLabel(event.type)),
+            subtitle: Text(_getEventTypeLabel(event)),
             onTap: () => _handleEventTap(event),
           ),
         );
@@ -347,27 +351,46 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
   }
 
-  String _getEventTypeLabel(EventType type) {
-    switch (type) {
+  String _getEventTypeLabel(CalendarEvent event) {
+    switch (event.type) {
       case EventType.task:
         return '任务';
       case EventType.journal:
         return '日记';
       case EventType.transaction:
-        return '财务';
+        final transaction = event.item as TransactionModel;
+        return transaction.type == TransactionType.expense ? '支出' : '收入';
     }
   }
 
   void _handleEventTap(CalendarEvent event) {
     switch (event.type) {
       case EventType.task:
-        // Navigate to task detail
+        final task = event.item as TaskModel;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TaskDetailScreen(taskId: task.id),
+          ),
+        ).then((_) => _loadEvents());
         break;
       case EventType.journal:
-        // Navigate to journal detail
+        final journal = event.item as dynamic;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => JournalDetailScreen(entryId: journal.id),
+          ),
+        ).then((_) => _loadEvents());
         break;
       case EventType.transaction:
-        // Navigate to transaction detail
+        final transaction = event.item as TransactionModel;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TransactionEditScreen(transaction: transaction),
+          ),
+        ).then((_) => _loadEvents());
         break;
     }
   }

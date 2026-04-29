@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/settings_provider.dart';
+import 'backup_screen.dart';
+import 'sync_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -9,6 +11,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final settings = context.watch<SettingsProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -23,9 +26,9 @@ class SettingsScreen extends StatelessWidget {
           SwitchListTile(
             secondary: const Icon(Icons.dark_mode),
             title: Text(l10n.theme),
-            value: Theme.of(context).brightness == Brightness.dark,
+            value: settings.themeMode == ThemeMode.dark,
             onChanged: (value) {
-              // TODO: Implement theme switching
+              settings.setThemeMode(value ? ThemeMode.dark : ThemeMode.light);
             },
           ),
 
@@ -58,7 +61,7 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.language),
             title: Text(l10n.language),
-            subtitle: const Text('中文'),
+            subtitle: Text(settings.appLocale == 'zh_CN' ? '中文' : 'English'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => _showLanguagePicker(context),
           ),
@@ -71,9 +74,9 @@ class SettingsScreen extends StatelessWidget {
           SwitchListTile(
             secondary: const Icon(Icons.notifications),
             title: Text(l10n.notification),
-            value: true,
+            value: settings.notificationsEnabled,
             onChanged: (value) {
-              // TODO: Implement notification toggle
+              settings.setNotificationsEnabled(value);
             },
           ),
 
@@ -87,7 +90,10 @@ class SettingsScreen extends StatelessWidget {
             title: Text(l10n.backup),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // TODO: Navigate to backup screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const BackupScreen()),
+              );
             },
           ),
 
@@ -96,7 +102,10 @@ class SettingsScreen extends StatelessWidget {
             title: Text(l10n.sync),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // TODO: Navigate to sync screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SyncScreen()),
+              );
             },
           ),
 
@@ -124,7 +133,7 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.privacy_tip),
             title: const Text('隐私政策'),
             onTap: () {
-              // TODO: Open privacy policy
+              _showPrivacyPolicy(context);
             },
           ),
         ],
@@ -146,6 +155,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showLanguagePicker(BuildContext context) {
+    final settings = context.read<SettingsProvider>();
     showModalBottomSheet(
       context: context,
       builder: (context) => SafeArea(
@@ -154,19 +164,46 @@ class SettingsScreen extends StatelessWidget {
           children: [
             ListTile(
               title: const Text('中文'),
-              trailing: const Icon(Icons.check, color: Colors.green),
+              trailing: settings.appLocale == 'zh_CN'
+                  ? const Icon(Icons.check, color: Colors.green)
+                  : null,
               onTap: () {
+                settings.setAppLocale('zh_CN');
                 Navigator.pop(context);
               },
             ),
             ListTile(
               title: const Text('English'),
+              trailing: settings.appLocale == 'en_US'
+                  ? const Icon(Icons.check, color: Colors.green)
+                  : null,
               onTap: () {
+                settings.setAppLocale('en_US');
                 Navigator.pop(context);
               },
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showPrivacyPolicy(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('隐私政策'),
+        content: const SingleChildScrollView(
+          child: Text(
+            '此应用尊重您的隐私，所有数据仅保存在本地存储，除非您主动选择备份或同步。',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('关闭'),
+          ),
+        ],
       ),
     );
   }

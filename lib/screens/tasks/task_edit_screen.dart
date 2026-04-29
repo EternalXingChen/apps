@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/task_model.dart';
 import '../../providers/task_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../services/notification_service.dart';
 
 class TaskEditScreen extends StatefulWidget {
@@ -22,6 +23,7 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
   TaskPriority _priority = TaskPriority.medium;
   TaskRepeatRule _repeatRule = TaskRepeatRule.none;
   int? _reminderMinutes;
+  String _notificationSound = '默认铃声';
 
   @override
   void initState() {
@@ -34,6 +36,7 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
     _priority = task?.priority ?? TaskPriority.medium;
     _repeatRule = task?.repeatRule ?? TaskRepeatRule.none;
     _reminderMinutes = task?.reminderMinutes;
+    _notificationSound = task?.notificationSound ?? '默认铃声';
   }
 
   @override
@@ -132,6 +135,13 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
               onTap: _selectReminder,
             ),
             const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.music_note),
+              title: const Text('提醒铃声'),
+              subtitle: Text(_notificationSound),
+              onTap: _selectReminderSound,
+            ),
+            const SizedBox(height: 16),
             const Text('优先级', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             SegmentedButton<TaskPriority>(
@@ -208,6 +218,7 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
       priority: _priority,
       repeatRule: _repeatRule,
       reminderMinutes: _reminderMinutes,
+      notificationSound: _notificationSound,
       isCompleted: widget.task?.isCompleted ?? false,
       createdAt: widget.task?.createdAt ?? DateTime.now(),
       updatedAt: DateTime.now(),
@@ -220,8 +231,24 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
       await provider.addTask(task);
     }
 
-    // Schedule notification if due date and time are set
-    if (_dueDate != null && _dueTime != null && _reminderMinutes != null) {
+    final settings = context.read<SettingsProvider>();
+    final notificationsEnabled = settings.notificationsEnabled;
+    final useSound = notificationsEnabled && task.notificationSound != '静音';
+
+    if (notificationsEnabled && useSound) {
+      try {
+        await NotificationService().showImmediateNotification(
+          title: '任务已保存',
+          body: '任务“${task.title}”已创建',
+          useDefaultSound: useSound,
+        );
+      } catch (e) {
+        print('Failed to show immediate notification: $e');
+      }
+    }
+
+    // Schedule notification if notifications are enabled and due date/time are set
+    if (notificationsEnabled && _dueDate != null && _dueTime != null && _reminderMinutes != null) {
       try {
         await NotificationService().scheduleTaskReminder(task);
       } catch (e) {
@@ -280,6 +307,25 @@ class _TaskEditScreenState extends State<TaskEditScreen> {
     );
     if (selected != null) {
       setState(() => _reminderMinutes = selected);
+    }
+  }
+
+  Future<void> _selectReminderSound() async {
+    final options = ['默认铃声', '静音'];
+    final selected = await showDialog<String>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('选择提醒铃声'),
+        children: options.map((sound) => SimpleDialogOption(
+          onPressed: () => Navigator.pop(context, sound),
+          child: Text(sound),
+        )).toList(),
+      ),
+    );
+    if (selected != null) {
+      setState(() {
+        _notificationSound = selected;
+      });
     }
   }
 }
